@@ -1,0 +1,6 @@
+dotnet-runtimes == Microsoft.AspNetCore.App == v5.0.7 [/snap/dotnet-sdk/129/shared/Microsoft.AspNetCore.App]
+dotnet-runtimes == Microsoft.NETCore.App == v5.0.7 [/snap/dotnet-sdk/129/shared/Microsoft.NETCore.App]
+
+Azure Functions Core Tools == v3.x.
+Azure CLI == v2.26.0
+.NET Core SDK == dotnet-sdk == v5.0.301 [/snap/dotnet-sdk/129/sdk]

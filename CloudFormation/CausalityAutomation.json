@@ -1,0 +1,148 @@
+{
+
+  "Description" : "Created by Starly. Causality Discovery CloudFromation.",
+
+  "Parameters" : {
+    "InstanceType" : {
+
+      "Type" : "String",
+      "Default" : "c5.2xlarge"
+    },
+    "InstanceNum" : {
+
+      "Type" : "Number",
+      "Default" : 2
+    },
+    "Ec2KeyName" : {
+
+      "Type" : "String",
+      "Default" : "id_rsa"
+    },
+    "Ec2KeyPath" : {
+
+      "Type" : "String",
+      "Default" : "~/.ssh/id_rsa"
+    },
+    "SubnetId" : {
+
+      "Type" : "String",
+      "Default" : "subnet-5e38fc14"
+    },
+    "VpcId" : {
+
+      "Type" : "String",
+      "Default" : "vpc-81450cf9"
+    },
+    "Region" : {
+
+      "Type" : "String",
+      "Default" : "us-west-2"
+    },
+    "MasterSecurityGroupId" : {
+
+      "Type" : "String",
+      "Default" : "sg-058eb4f97ec6e76be"
+    },
+    "SlaveSecurityGroupId" : {
+
+      "Type" : "String",
+      "Default" : "sg-0db716d6290eced2d"
+    },
+    "TerminationProtected" : {
+
+      "Type" : "String",
+      "Default" : "false"
+    }
+  },
+  "Resources": {
+
+    "VPCEndpointApi": {
+      "Type" : "AWS::EC2::VPCEndpoint",
+      "Properties" : {
+          "SecurityGroupIds" : [{"Ref" : "MasterSecurityGroupId"},
+            {"Ref" : "SlaveSecurityGroupId"}],
+          "ServiceName" : "com.amazonaws.us-west-2.ecr.api",
+          "SubnetIds" : [{"Ref" : "SubnetId"}],
+          "VpcEndpointType" : "Interface",
+          "VpcId" : {"Ref" : "VpcId"}
+        }
+    },
+
+    "VPCEndpointDkr": {
+      "Type" : "AWS::EC2::VPCEndpoint",
+      "Properties" : {
+          "SecurityGroupIds" : [{"Ref" : "MasterSecurityGroupId"},
+            {"Ref" : "SlaveSecurityGroupId"}],
+          "ServiceName" : "com.amazonaws.us-west-2.ecr.dkr",
+          "SubnetIds" : [{"Ref" : "SubnetId"}],
+          "VpcEndpointType" : "Interface",
+          "VpcId" : {"Ref" : "VpcId"}
+        }
+    },
+
+    "EMRCluster": {
+      "Type": "AWS::EMR::Cluster",
+      "Properties": {
+        "Applications" : [
+          {"Name" : "Spark"}, 
+          {"Name" : "Hadoop"}
+        ],
+        "Instances": {
+          "Ec2KeyName" : {"Ref" : "Ec2KeyName"},
+          "MasterInstanceGroup": {
+            "InstanceCount": 1,
+            "InstanceType": {"Ref" : "InstanceType"}
+          },
+          "CoreInstanceGroup": {
+            "InstanceCount": {"Ref" : "InstanceNum"},
+            "InstanceType": {"Ref" : "InstanceType"}
+          },
+          "TerminationProtected" : {"Ref" : "TerminationProtected"},
+          "Ec2SubnetId" : {"Ref" : "SubnetId"}
+        },
+        "LogUri" : "s3://cf-templates-17zwpytxxtzm9-us-west-2/logs/",
+        "Name": "EMR 6.0.0 with Docker",
+        "JobFlowRole" : "EMR_EC2_DefaultRole",
+        "ServiceRole" : "EMR_DefaultRole",
+        "ReleaseLabel" : "emr-6.0.0",
+        "VisibleToAllUsers" : true,
+        "Configurations" : [
+          {
+             "Classification" : "container-executor",
+             "Configurations":[
+                {
+                   "Classification" : "docker",
+                   "ConfigurationProperties":{
+                      "docker.privileged-containers.registries":"local,centos,public.ecr.aws/e0a3g4z6",
+                      "docker.trusted.registries":"local,centos,public.ecr.aws/e0a3g4z6"
+                  }
+                }
+             ]
+          },
+          {
+             "Classification" : "spark-defaults",
+             "ConfigurationProperties":{
+                "spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE":"docker",
+                "spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE":"docker"
+             }
+          }
+       ],
+       "BootstrapActions" : [
+         {
+           "Name" : "HadoopSetting",
+           "ScriptBootstrapAction" : {
+             "Path" : "s3://cf-templates-17zwpytxxtzm9-us-west-2/Bootstrap"
+           }
+         }
+       ]
+      }
+    }
+
+  },
+  "Outputs" : {
+    "EMRClusterSSH" : {
+      "Description" : "EMR Cluster identifier",
+      "Value" : { "Fn::Join" : ["", ["ssh -i ", {"Ref" : "Ec2KeyPath"}, " hadoop@", { "Fn::GetAtt" : [ "EMRCluster", "MasterPublicDNS" ]}]]}
+    }
+  }
+}

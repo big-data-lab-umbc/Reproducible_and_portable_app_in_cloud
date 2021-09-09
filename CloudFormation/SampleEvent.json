@@ -1,0 +1,18 @@
+{
+    "Configurations": [
+        {
+            "ec2":{
+                "accessKey": "<id>",
+                "secretKey": "<password>"
+            },
+            "awsRegion": "us-west-2",
+            "ec2KeyPath": "~/.ssh/id_rsa"
+        }
+    ],
+    "Commands": {
+        "gitClone": "git clone https://github.com/big-data-lab-umbc/ensemble_causality_learning.git /home/hadoop/ensemble_causality_learning/",
+        "putHadoopSetting": "hadoop fs -put /home/hadoop/.docker/config.json /user/hadoop/",
+        "putHadoopData": "hadoop fs -put /home/hadoop/5v_linear_10M.csv",
+        "sparkSubmit": "spark-submit --master yarn --deploy-mode cluster --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=public.ecr.aws/e0a3g4z6/causality-ensemble --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_CLIENT_CONFIG=hdfs:///user/hadoop/config.json --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/etc/passwd:/etc/passwd:ro --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=public.ecr.aws/e0a3g4z6/causality-ensemble --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_CLIENT_CONFIG=hdfs:///user/hadoop/config.json --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/etc/passwd:/etc/passwd:ro --conf spark.dynamicAllocation.enabled=True --driver-memory 5g --py-files sources.zip --files file:///home/hadoop/ensemble_causality_learning/5v_linear_10M.csv ~/ensemble_causality_learning/two_phase_algorithm_data.py 3 ~/5v_linear_10M.csv 240 3 -v"
+    }
+}

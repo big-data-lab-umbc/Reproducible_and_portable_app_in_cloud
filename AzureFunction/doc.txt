@@ -1,0 +1,11 @@
+{
+    "id": "250c38e9-47a3-4d89-bc68-54155a7fe08e",
+    "isDefault": true,
+    "name": "BigDataAnalyticsLab",
+    "state": "Enabled",
+    "user": {
+      "name": "pc71776@umbc.edu",
+      "type": "user"
+    }
+}
+
