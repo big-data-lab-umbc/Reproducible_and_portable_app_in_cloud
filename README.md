@@ -1,7 +1,7 @@
 # Reproducible and Portable Big Data Analytics in Cloud
 
 ## Introduction
-We design a Agnostic Serverless Application Model, which help us deploy, analysis, and reproduce big data application automatically.
+We design a Agnostic Serverless Application Model, which help us deploy, execute, analysis, and reproduce big data application automatically.
 
 ## Deploy, Analysis, and Reproduce automatically on AWS (SAMApplication)
 
@@ -12,7 +12,7 @@ pip3 install Werkzeug --upgrade
 ```
 Install AWS SAM CLI follow the [Step 4](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-linux.html).
 
-### Deploy applications
+### Deploy and execute applications
 1. Configuration
 
 Use your customized configurations. Replace default values in <./SAMApplication/automation.sh> and <./SAMApplication/sample_event/your_event.json>
