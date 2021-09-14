@@ -19,14 +19,14 @@ bash automation.sh
 ```
 
 3. Go to CloudFormation console, navigate to your application stack in [stacks](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks). 
-<p align="center"><img src="doc/cloudformation.png"/></p>
+<p align="center"><img src="../doc/cloudformation.png"/></p>
 
 4. Navigate to your application AWS::Lambda::Function, and submit your config event <./SAMApplication/sample_event/your_event.json> to Lambda.
-<p align="center"><img src="doc/lambda.png"/></p>
+<p align="center"><img src="../doc/lambda.png"/></p>
 
 ### Analysis applications
 1. Navigate to DynamoDB AWS::Lambda::Function, and query your application outputs. Each record represents one execution of your application.
-<p align="center"><img src="doc/dynamoDB.png"/></p>
+<p align="center"><img src="../doc/dynamoDB.png"/></p>
 
 ### Reproduce applications
 1. Each execution record includes all reproducibility configs. Use the reproducibility config as the <your_event.json> in Lambda, and submit for reproducibility.
