@@ -17,8 +17,8 @@
             }
         },
         "clusterLoginPassword": {
-            "type": "SecureString",
-            "defaultValue": "WangXin@070105",
+            "type": "String",
+            "defaultValue": "BigData@12345",
             "metadata": {
                 "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
             }
@@ -45,15 +45,15 @@
             }
         },
         "sshUserName": {
-            "defaultValue": "sshuser",
+            "defaultValue": "azureuser",
             "type": "String",
             "metadata": {
                 "description": "These credentials can be used to remotely access the cluster."
             }
         },
         "sshPassword": {
-            "type": "SecureString",
-            "defaultValue": "WangXin@070105",
+            "type": "String",
+            "defaultValue": "BigData@12345",
             "metadata": {
                 "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
             }

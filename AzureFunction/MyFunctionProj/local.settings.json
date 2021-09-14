@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=causalityncerxyroxb2sg;AccountKey=<$AccountKey_in_your_StrongAccount_AccessKeys>;EndpointSuffix=core.windows.net",
+    "AzureCosmosDBConnectionString": "AccountEndpoint=https://causalityresult.documents.azure.com:443/;AccountKey=<$AccountKey_in_your_CosmosDB_Keys>;", 
+    "FUNCTIONS_WORKER_RUNTIME": "python"
+  }
+}

@@ -1,0 +1,101 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westus2"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/virtualNetworks/StartlyResource-vnet"
+        },
+        "virtualNetworkName": {
+            "value": "StartlyResource-vnet"
+        },
+        "networkSecurityGroups": {
+            "value": [
+                {
+                    "name": "basicNsgStartlyResource-vnet-nic01",
+                    "id": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/networkSecurityGroups/basicNsgStartlyResource-vnet-nic01",
+                    "rules": [
+                        {
+                          "name": "sshallow",
+                          "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                          }
+                        }
+                    ]
+                }
+            ]
+        },
+        "networkInterfaceConfigurations": {
+            "value": [
+                {
+                    "name": "StartlyResource-vnet-nic01",
+                    "primary": true,
+                    "subnetId": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/virtualNetworks/StartlyResource-vnet/subnets/default",
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [],
+                    "enableAcceleratedNetworking": true,
+                    "nsgName": "basicNsgStartlyResource-vnet-nic01",
+                    "nsgId": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/networkSecurityGroups/basicNsgStartlyResource-vnet-nic01",
+                    "pipName": "publicIp-StartlyResource-vnet-nic01"
+                }
+            ]
+        },
+        "vmName": {
+            "value": "DA-VMset"
+        },
+        "virtualMachineScaleSetName": {
+            "value": "DA-VMset"
+        },
+        "singlePlacementGroup": {
+            "value": "false"
+        },
+        "instanceCount": {
+            "value": "1"
+        },
+        "instanceSize": {
+            "value": "Standard_NC12s_v3"
+        },
+        "scaleInPolicy": {
+            "value": {
+                "rules": [
+                    "Default"
+                ]
+            }
+        },
+        "diagnosticStorageAccount": {
+            "value": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Storage/storageAccounts/causalityncerxyroxb2sg"
+        },
+        "overprovision": {
+            "value": true
+        },
+        "upgradePolicy": {
+            "value": "Manual"
+        },
+        "adminUsername": {
+            "value": "azureuser"
+        },
+        "customData": {
+            "value": "#!/bin/bash\ncurl -fsSL https://get.docker.com -o get-docker.sh\nsudo sh get-docker.sh\nsudo service docker start\nsudo usermod -a -G docker azureuser\nsudo chmod 666 /var/run/docker.sock\nsudo apt install unzip\ncurl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash\ndistribution=$(. /etc/os-release;echo $ID$VERSION_ID) && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list\nsudo apt-get update\nsudo apt-get install -y nvidia-docker2\nsudo systemctl restart docker"
+        },
+        "yourPublicKey":{
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmlROUH2wjVnOw/v9D8bFc8DazEW3LjPWfPQ7IWHiL59rOVb+CZ66Y6l7fG5C8jq/0FuAj1ZaFtcDbWoTnw1ag4q8nN+heQb0BmBC90EwV6Lsvs5QI2HB10uxtZcdGdhBq7YQ+IFUMd8jlCQ+7z9Q5didNGfOsK/puBlcYAyT17XI4Uv4RYnbk27X5kKk8qRHPAleo2XT2oPJDxfrg+2iW5dum3YJvwuzKH4kyKFONWlRRDVugb6FxTMYW4ijvxsW3gmdkz1nNcw9FGuanyB++QPIyEtYitwvdbVemx7blNqayYeBedRnPbHYJMoDjgRTxU8lBHkziaFxRzOnnNRlt starly@starly-Inspiron-3670"
+        },
+        "platformFaultDomainCount": {
+            "value": "5"
+        }
+    }
+}

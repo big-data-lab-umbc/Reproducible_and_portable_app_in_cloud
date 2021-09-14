@@ -40,7 +40,7 @@ execute_with_logs "curl -fsSL https://get.docker.com -o get-docker.sh"
 execute_with_logs "sudo sh get-docker.sh"
 execute_with_logs "sudo service docker start"
 
-execute_with_logs "sudo usermod -a -G docker sshuser"
+execute_with_logs "sudo usermod -a -G docker azureuser"
 execute_with_logs "sudo chmod 666 /var/run/docker.sock"
 export PATH=/usr/local/bin:$PATH
 
