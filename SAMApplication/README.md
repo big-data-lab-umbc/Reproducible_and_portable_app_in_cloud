@@ -25,8 +25,8 @@ bash automation.sh
 <p align="center"><img src="../doc/lambda.png"/></p>
 
 ### Analysis applications
-1. Navigate to DynamoDB AWS::Lambda::Function, and query your application outputs. Each record represents one execution of your application.
+Navigate to DynamoDB AWS::Lambda::Function, and query your application outputs. Each record represents one execution of your application.
 <p align="center"><img src="../doc/dynamoDB.png"/></p>
 
 ### Reproduce applications
-1. Each execution record includes all reproducibility configs. Use the reproducibility config as the <your_event.json> in Lambda, and submit for reproducibility.
+Each execution record includes all reproducibility configs. Use the reproducibility config as the <your_event.json> in Lambda, and submit for reproducibility.
