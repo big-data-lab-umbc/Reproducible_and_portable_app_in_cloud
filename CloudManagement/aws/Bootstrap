@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+grep -q '"isMaster": true' /mnt/var/lib/info/instance.json \
+|| { echo "Not running on master node, nothing to do" && exit 0; }
+
+sudo yum update -y
+sudo amazon-linux-extras install docker -y
+sudo service docker start
+sudo usermod -a -G docker hadoop
+sudo chmod 666 /var/run/docker.sock
+export PATH=/usr/local/bin:$PATH
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/e0a3g4z6
+sudo chmod 644 ~/.docker/config.json
+
+sudo yum install -y git
+aws s3 cp s3://cf-templates-17zwpytxxtzm9-us-west-2/5v_linear_10M.csv ~/

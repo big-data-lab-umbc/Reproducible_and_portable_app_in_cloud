@@ -1,0 +1,40 @@
+{
+    "Configurations": { 
+        "ec2":{
+            "accessKey": "AKIASHT77BI5S2QHPAPZ",
+            "secretKey": "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"
+        },
+        "awsRegion": "us-west-2",
+        "ec2KeyPath": "~/.ssh/id_rsa",
+        "bill":{
+            "instancetype": "p3.8xlarge",
+            "EC2_price": 24.48,
+            "EBS_price": 0.01,
+            "data_size": 0.34
+        },
+        "instance_num": 1,
+        "gpu_num": 1,
+        "source_data": {
+            "bucketname": "kddworkshop",
+            "prefix": "office31.tar.gz",
+            "filename": "office31.tar.gz",
+            "version": "null"
+        },
+        "output_result": {
+            "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
+            "prefix": "DA_p3.8xlarge/result.txt",
+            "filename": "result.txt"
+        },
+        "output_event": {
+            "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
+            "prefix": "DA_p3.8xlarge/event.json",
+            "filename": "event.json"
+        },
+        "docker_image": "starlyxxx/horovod-pytorch-cuda10.1-cudnn7",
+        "command_line": "nvidia-docker run -v /home/ubuntu/MultiGpus-Domain-Adaptation:/root/MultiGpus-Domain-Adaptation -v /home/ubuntu/office31:/root/office31 starlyxxx/horovod-pytorch-cuda10.1-cudnn7:latest sh -c 'cd MultiGpus-Domain-Adaptation && horovodrun --verbose -np 1 -H localhost:1 /usr/bin/python3.6 main.py --config DeepCoral/DeepCoral.yaml --data_dir ../office31 --src_domain webcam --tgt_domain amazon'"
+    },
+    "Commands": {
+        "gitClone": "git clone https://github.com/big-data-lab-umbc/MultiGpus-Domain-Adaptation.git /home/ubuntu/MultiGpus-Domain-Adaptation/",
+        "CommandSubmit": {"$ref": "#/Configurations/command_line"}
+    }
+}

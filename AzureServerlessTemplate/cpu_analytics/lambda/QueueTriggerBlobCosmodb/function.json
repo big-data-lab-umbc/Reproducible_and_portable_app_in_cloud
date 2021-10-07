@@ -1,0 +1,22 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "myblob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "test/{name}",
+      "connection": "AzureWebJobsStorage"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "doc",
+      "databaseName": "SampleDB",
+      "collectionName": "causality",
+      "createIfNotExists": true,
+      "ConnectionStringSetting": "AzureCosmosDBConnectionString",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
