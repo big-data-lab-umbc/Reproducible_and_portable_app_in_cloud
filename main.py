@@ -6,44 +6,47 @@ import os
 import uuid
 from subprocess import check_output, Popen, call, PIPE, STDOUT
 
-configFile = "./ConfigTemplate/config.ini"
+resconfigFile = "./ConfigTemplate/resource.ini"
+appconfigFile = "./ConfigTemplate/application.ini"
+personalconfigFile = "./ConfigTemplate/personal.ini"
+
 reproduceFolder = "./reproduce"
-reproducePara = "reproduce_para.json"
-reproduceConf = "reproduce_conf.json"
+reproducePara = "pipeline_para.json"
+reproduceConf = "pipeline.json"
 
 
 def readsummary(): 
     config = configparser.ConfigParser()
-    config.read(configFile)
-    return (str(config['summary']['cloud']),str(config['summary']['application']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['git_link']),str(config['summary']['bootstrap']))
+    config.read(personalconfigFile)
+    return (str(config['summary']['cloud']),str(config['summary']['application']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']))
 
 def readparameter():
     config = configparser.ConfigParser() 
-    config.read(configFile)
-    return (str(config['parameter']['experiment_docker']),str(config['parameter']['experiment_name']),str(config['parameter']['data']),str(config['parameter']['command']))
+    config.read(appconfigFile)
+    return (str(config['parameter']['experiment_docker']),str(config['parameter']['experiment_name']),str(config['parameter']['data']),str(config['parameter']['command']),str(config['parameter']['git_link']),str(config['parameter']['bootstrap']))
 
 def readawscloud():
     config = configparser.ConfigParser() 
-    config.read(configFile)
+    config.read(resconfigFile)
     return (int(config['cloud.aws']['instance_num']),str(config['cloud.aws']['SUBNET_ID']),str(config['cloud.aws']['INSTANCE_TYPE']),str(config['cloud.aws']['VPC_ID']))
 
 def readazurecloud():
     config = configparser.ConfigParser() 
-    config.read(configFile)
+    config.read(resconfigFile)
     return (str(config['cloud.azure']['REGION']),str(config['cloud.azure']['resourceGroupID']),str(config['cloud.azure']['resourceGroupName']),str(config['cloud.azure']['instance_num']),str(config['cloud.azure']['INSTANCE_TYPE']))
 
-def readbill():
-    config = configparser.ConfigParser() 
-    config.read(configFile)
-    return (float(config['bill']['vm_price']),float(config['bill']['bigdata_cluster_price']),float(config['bill']['network_price']),float(config['bill']['storage_price']),float(config['bill']['container_price']))
+# def readbill():
+#     config = configparser.ConfigParser() 
+#     config.read(resconfigFile)
+#     return (float(config['bill']['vm_price']),float(config['bill']['bigdata_cluster_price']),float(config['bill']['network_price']),float(config['bill']['storage_price']),float(config['bill']['container_price']))
 
 def readreprodeuce():
     config = configparser.ConfigParser() 
-    config.read(configFile)
+    config.read(resconfigFile)
     return (str(config['reproduce']['reproduce_storage']),str(config['reproduce']['reproduce_database']))
 
 cloud_provider, application, your_key_path, your_key_name, your_git_username, your_git_password, git_link, bootstrap = readsummary()  #str
-vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
+# vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
 experiment_docker, experiment_name, data, command = readparameter()   #str
 reproduce_storage, reproduce_database = readreprodeuce()
 if cloud_provider == "aws":
@@ -55,10 +58,10 @@ elif cloud_provider == "azure":
 class Aws:
     def __init__(self, name):
         self.name = name
-        self.app_path = "AwsServerlessTemplate/"+application+"/"     #CausalityAnalyticsViaSpark/CloudRetrievalViaDask/DomainAdaptationViaHovorod
+        self.app_path = "AwsServerlessTemplate/"+application+"/"     #SparkAnalytics/DaskAnalytics/HovorodAnalytics
 
         #self.para_path = self.app_path+"parameter.json"
-        self.depoly_conf_path = self.app_path+"depoly_config.json"
+        self.deploy_conf_path = self.app_path+"deploy_config.json"
 
     def __str__(self):
         return '{} the aws template'.format(self.name)
@@ -73,34 +76,34 @@ class Aws:
                 pass
         return para_dict
 
-    def aws_depoly(self):
+    def aws_deploy(self):
         #config
-        with open(self.depoly_conf_path, "r") as json_file:
-            depoly_conf_dict = json.load(json_file)
-        depoly_new_conf_dict = depoly_conf_dict
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'InstanceType',INSTANCE_TYPE)
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'InstanceNum',instance_num)
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'Ec2KeyName',your_key_name)
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'Ec2KeyPath',your_key_path)
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'SubnetId',SUBNET_ID)
-        depoly_new_conf_dict = self.para_control(depoly_new_conf_dict,'VpcId',VPC_ID)
+        with open(self.deploy_conf_path, "r") as json_file:
+            deploy_conf_dict = json.load(json_file)
+        deploy_new_conf_dict = deploy_conf_dict
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'InstanceType',INSTANCE_TYPE)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'InstanceNum',instance_num)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'Ec2KeyName',your_key_name)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'Ec2KeyPath',your_key_path)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'SubnetId',SUBNET_ID)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'VpcId',VPC_ID)
         #TODO: generate security group resources for each test
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
-            json.dump(depoly_conf_dict, json_file, indent=4)
+            json.dump(deploy_conf_dict, json_file, indent=4)
 
         #lambda
         lambda_path = self.app_path+"lambda"
         target_path = reproduceFolder+"/lambda"
         shutil.copytree(lambda_path, target_path)
-        return 'start depolying on aws'
+        return 'start deploying on aws'
 
 class Azure:
     def __init__(self, name):
         self.name = name
-        self.app_path = "AzureServerlessTemplate/"+application+"/"     #CausalityAnalyticsViaSpark/CloudRetrievalViaDask/DomainAdaptationViaHovorod
+        self.app_path = "AzureServerlessTemplate/"+application+"/"     #SparkAnalytics/DaskAnalytics/HovorodAnalytics
 
         self.para_path = self.app_path+"parameter.json"
-        self.depoly_conf_path = self.app_path+"depoly_config.json"
+        self.deploy_conf_path = self.app_path+"deploy_config.json"
         self.command_path = self.app_path+"command_script.sh"
         self.lambda_path = self.app_path+"simu_lambda.sh"
 
@@ -117,7 +120,7 @@ class Azure:
                 pass
         return para_dict
 
-    def azure_depoly(self):
+    def azure_deploy(self):
         #para
         with open(self.para_path, "r") as json_file:
             parameter_dict = json.load(json_file)
@@ -129,10 +132,10 @@ class Azure:
             json.dump(parameter_new_dict, json_file, indent=4)
 
         #config
-        with open(self.depoly_conf_path, "r") as json_file:
-            depoly_conf_dict = json.load(json_file)
+        with open(self.deploy_conf_path, "r") as json_file:
+            deploy_conf_dict = json.load(json_file)
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
-            json.dump(depoly_conf_dict, json_file, indent=4)
+            json.dump(deploy_conf_dict, json_file, indent=4)
 
         #command_script
         with open(self.command_path, "r") as bash_file:
@@ -151,7 +154,7 @@ class Azure:
         target_path = reproduceFolder+"/lambda"
         shutil.copytree(lambda_path, target_path)
 
-        return 'start depolying on azure'
+        return 'start deploying on azure'
 
 # class Provider:
 #     def __init__(self, name):
@@ -161,7 +164,7 @@ class Azure:
 #         return 'the {} provider'.format(self.name)
 
 #     def provider_deploy(self):
-#         return 'is depolying on provider'
+#         return 'is deploying on provider'
 
 class Adapter:
     def __init__(self, obj, adapted_methods):
@@ -182,10 +185,10 @@ def main():
 
     if cloud_provider == "aws":
         Cloud = Aws(application)
-        template=Adapter(Cloud, dict(execute=Cloud.aws_depoly))
+        template=Adapter(Cloud, dict(execute=Cloud.aws_deploy))
     elif cloud_provider == "azure":
         Cloud = Azure(application)
-        template=Adapter(Cloud, dict(execute=Cloud.azure_depoly))
+        template=Adapter(Cloud, dict(execute=Cloud.azure_deploy))
     else:
         raise SystemExit("NOT IMPLEMENTED CLOUD, currect support aws, azure")
 
