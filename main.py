@@ -6,7 +6,7 @@ import os
 import uuid
 from subprocess import check_output, Popen, call, PIPE, STDOUT
 
-configFile = "./config/config.ini"
+configFile = "./ConfigTemplate/config.ini"
 reproduceFolder = "./reproduce"
 reproducePara = "reproduce_para.json"
 reproduceConf = "reproduce_conf.json"
@@ -55,7 +55,7 @@ elif cloud_provider == "azure":
 class Aws:
     def __init__(self, name):
         self.name = name
-        self.app_path = "AwsServerlessTemplate/"+application+"/"     #bigdata_analytics/cpu_analytics/gpu_analytics
+        self.app_path = "AwsServerlessTemplate/"+application+"/"     #CausalityAnalyticsViaSpark/CloudRetrievalViaDask/DomainAdaptationViaHovorod
 
         #self.para_path = self.app_path+"parameter.json"
         self.depoly_conf_path = self.app_path+"depoly_config.json"
@@ -97,12 +97,12 @@ class Aws:
 class Azure:
     def __init__(self, name):
         self.name = name
-        self.app_path = "AzureServerlessTemplate/"+application+"/"     #bigdata_analytics/cpu_analytics/gpu_analytics
+        self.app_path = "AzureServerlessTemplate/"+application+"/"     #CausalityAnalyticsViaSpark/CloudRetrievalViaDask/DomainAdaptationViaHovorod
 
         self.para_path = self.app_path+"parameter.json"
         self.depoly_conf_path = self.app_path+"depoly_config.json"
         self.command_path = self.app_path+"command_script.sh"
-        self.lambda_path = self.app_path+"fake_lambda.sh"
+        self.lambda_path = self.app_path+"simu_lambda.sh"
 
     def __str__(self):
         return '{} the azure template'.format(self.name)
@@ -140,7 +140,7 @@ class Azure:
         with open(reproduceFolder+"/reproduce_command.sh", "w") as bash_file:
             bash_file.writelines(command_script)
 
-        #fake_lambda
+        #simu_lambda
         with open(self.lambda_path, "r") as bash_file:
             lambda_script = bash_file.readlines()
         with open(reproduceFolder+"/reproduce_lambda.sh", "w") as bash_file:
@@ -173,17 +173,6 @@ class Adapter:
 
 def main():
 
-    # objects = [Computer('Asus')]
-
-    # synth = Synthesizer('moog')
-    # objects.append(Adapter(synth, dict(execute=synth.play)))
-
-    # human = Human('Bob')
-    # objects.append(Adapter(human, dict(execute=human.speak)))
-
-    # for i in objects:
-    #     print('{} {}'.format(str(i), i.execute()))
-
     for files in os.listdir(reproduceFolder):
         path = os.path.join(reproduceFolder, files)
         try:
@@ -205,10 +194,10 @@ def main():
     id_uuid = str(uuid.uuid4())
     if cloud_provider == "aws":
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
-    #     call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
-    #     call('cd '+reproduceFolder+' && sam deploy --stack-name samautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
-    # elif cloud_provider == "azure":
-    #     call('cd '+reproduceFolder+' && az deployment group create --name Deploy LocalTemplate --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
+        call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
+        call('cd '+reproduceFolder+' && sam deploy --stack-name samautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
+    elif cloud_provider == "azure":
+        call('cd '+reproduceFolder+' && az deployment group create --name Deploy LocalTemplate --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
 if __name__ == "__main__":
     main()
     
