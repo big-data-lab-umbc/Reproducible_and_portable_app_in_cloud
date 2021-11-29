@@ -1,0 +1,17 @@
+## Examples: easy to understand RPAC across all domains
+
+The [examples](./examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy their example configurations from `./examples/application` to `./ConfigTemplate`.
+
+# Spark-based big data analytics on virtual CPU nodes.
+We provide Spark-based parallel framework via the docker-based Spark engine virtual cluster provisioned by direct cloud services like AWS EMR with additional cloud resources like virtual network, container service and file system. 
+By default setting, the resource manager like YARN NodeManager initiates the environment from a pulled docker image, and allocates one virtual instance as the master while others as workers. With the pipeline execution mode like serverless, big data analytics enables automated execution management on master and execution computation on workers defined by serverless function handlers/implementations. 
+
+Since big data analytics utilizes many compute nodes with complex computation proprieties, it is important to make sure availability and reliability during cloud execution. To achieve a secure and stable scalable execution, we control the access permission of master and workers by using the network security group. During big data analytics, our pipeline assigns one group for master and another for workers, and only enables TCP/UDP inbound and outbound rules within them. Also, for computation reliability, the big data analytics pipeline only allows client SSH permission for the master security group.
+
+# Dask-based big data analytics on virtual CPU nodes.
+Besides Spark, our RPAC toolkit also supports cloud CPU-based parallel analytics by using Dask as the resource manager in the cluster. Different from Spark that has dedicated cloud services (such as EMR in AWS), Dask environment can only be provisioned by regular virtual machine services (such as EC2 in AWS).
+
+Each virtual instance in cluster initiates one docker container and our pipeline assigns one of the containers to be the Dask scheduler and others to be workers. Same with the security group setup with Spark-based analytics, we divide the client access between scheduler and workers for execution reliability. During analytics execution, different from AWS EMR service which automatically initiates Spark processes after hardware provisioning, our RPAC toolkit needs to start Dask processes on both scheduler and worker containers during software provisioning before executing big data analytics on virtual CPU nodes. Besides, same as Spark-based cloud services, the client can also produce interactive visualizations based on Dask diagnostic dashboard in our framework, by using the public DNS name (public IP) of the scheduler instance with its dashboard port.
+
+# Horovod-based big data analytics on virtual GPU nodes.
+To provide a GPU-based parallel framework, we leverage Horovod and regular virtual machine services for analytics. The RPAC toolkit executes multi-instance GPU-based data analytics within our pre-built Docker containers, involving a shared file system and a customized port number for the SSH daemon. In order to categorize functionality between different instances, we set one of them as the primary worker and others as secondary workers. Within the container, the primary worker runs the MPI parallel command for data analytics execution while secondary workers listen to that specific port. 

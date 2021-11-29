@@ -18,7 +18,7 @@ reproduceConf = "pipeline.json"
 def readsummary(): 
     config = configparser.ConfigParser()
     config.read(personalconfigFile)
-    return (str(config['summary']['cloud']),str(config['summary']['application']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']))
+    return (str(config['summary']['cloud']),str(config['summary']['application']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['cloud_credentials']))
 
 def readparameter():
     config = configparser.ConfigParser() 
@@ -45,12 +45,14 @@ def readreprodeuce():
     config.read(resconfigFile)
     return (str(config['reproduce']['reproduce_storage']),str(config['reproduce']['reproduce_database']))
 
-cloud_provider, application, your_key_path, your_key_name, your_git_username, your_git_password, git_link, bootstrap = readsummary()  #str
+cloud_provider, application, your_key_path, your_key_name, your_git_username, your_git_password, cloud_credentials = readsummary()  #str
 # vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
-experiment_docker, experiment_name, data, command = readparameter()   #str
+experiment_docker, experiment_name, data, command, git_link, bootstrap = readparameter()   #str
 reproduce_storage, reproduce_database = readreprodeuce()
 if cloud_provider == "aws":
     instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
+    cloud_access_key = cloud_credentials.split(":")[0]
+    cloud_secret_key = cloud_credentials.split(":")[1]
 elif cloud_provider == "azure":
     REGION, resourceGroupID, resourceGroupName, instance_num, INSTANCE_TYPE = readazurecloud() #str
 
@@ -196,10 +198,15 @@ def main():
 
     id_uuid = str(uuid.uuid4())
     if cloud_provider == "aws":
+        call('aws configure set aws_access_key_id '+cloud_access_key, shell=True)
+        call('aws configure set aws_secret_access_key '+cloud_secret_key, shell=True)
+
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam deploy --stack-name samautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
     elif cloud_provider == "azure":
+        call('az login', shell=True)
+
         call('cd '+reproduceFolder+' && az deployment group create --name Deploy LocalTemplate --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
 if __name__ == "__main__":
     main()
