@@ -19,12 +19,6 @@ To use RPAC toolkit, make the following changes to your configuration:
 1. Update configurations [resource.ini](./ConfigTemplate/resource.ini), [application.ini](./ConfigTemplate/application.ini), [personal.ini](./ConfigTemplate/personal.ini) in ConfigTemplate folder.
 2. Run ```python3 main.py``` to execute the big data analytics.
 
-## Examples
-The [examples](./examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy these example configurations to ConfigTemplate folder.
-
-## Reproduce
-The [reproduce](./reproduce) folder includes the generated pipeline file. RPAC toolkit will execute big data analytics in cloud based on all files in this folder.
-
 ## Getting Started
 Three-pointers to get you started:
 - [First execution: get first execution with understanding and using RPAC toolkit](./docs/first_execution.md)
