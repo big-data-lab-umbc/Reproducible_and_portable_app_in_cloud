@@ -35,7 +35,7 @@ The AWS::Lambda::Function resource url can be find at [AWS Lambda service](https
 
 <p align="center"><img src="./figures/dynamodbscan.png"/></p>
 
-> Note: here we also provide Azure Cosmosdb output as reference.
+> Note: here we also provide [Azure Cosmosdb](https://portal.azure.com/#@umbc.onmicrosoft.com/resource/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourcegroups/StartlyResource/providers/Microsoft.DocumentDB/databaseAccounts/causalityresult/dataExplorer) output as reference.
 
 <p align="center"><img src="./figures/cosmosdb.png"/></p>
 
