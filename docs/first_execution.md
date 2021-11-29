@@ -1,8 +1,8 @@
 ## First execution: get first execution with understanding and using RPAC toolkit
 
-When RPAC toolkit is being utilized first time, there is no execution history for querying and reproducing. Users need to prepare configurations to generate the pipeline file for the whole execution. 
+When RPAC toolkit is being utilized the first time, there is no execution history for querying and reproducing. Users need to prepare configurations to generate the pipeline file for the whole execution. 
 
-We use CloudRetrievalViaDask application in AWS Cloud as the toturiol example.
+We use CloudRetrievalViaDask application in AWS Cloud as the tutorial example.
 
 1. Fill in three configuration files in ./ConfigTemplate folder. For personal.ini, `cloud_credentials` is formated in `credential_access_key:credential_secert_key`. 
 
@@ -18,18 +18,21 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 
 ```
 
-Note: for toturiol, we seperate the cloud provisioning with analytics execution. This step will only finish software and hardware provisioning of analytics automaticly.
+Note: for the tutorial, we separate cloud provisioning with analytics execution. This step will only finish software and hardware provisioning of analytics automatically.
 
 3. Send the [analytics execution event](./AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via CloudRetrievalFunction AWS::Lambda::Function. Wait for stutas until `Execution result: succeeded`.
 
 The AWS::Lambda::Function resource url can be find at [AWS Lambda service](https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions). Submit your event from Lambda.
 
-<p align="center"><img src="./docs/figures/submit_event.png"/></p>
-<p align="center"><img src="./docs/figures/submit_successed.png"/></p>
+<p align="center"><img src="./figures/submit_event.png"/></p>
+<p align="center"><img src="./figures/submit_successed.png"/></p>
 
 4. All analytics is done now. Users are able to scan and query execution history in [AWS Dynamodb](https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer).
 
-<p align="center"><img src="./docs/figures/dynamodbscan.png"/></p>
-<p align="center"><img src="./docs/figures/cosmosdb.png"/></p>
+<p align="center"><img src="./figures/dynamodbscan.png"/></p>
 
-5. Termial RPAC. Delete stack just created in [https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2).
+Note: here we also provide Azure Cosmosdb output as reference.
+
+<p align="center"><img src="./figures/cosmosdb.png"/></p>
+
+5. Terminate RPAC. Delete the stack just created in [https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2).
