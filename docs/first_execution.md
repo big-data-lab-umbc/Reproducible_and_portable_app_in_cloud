@@ -8,7 +8,7 @@ We use CloudRetrievalViaDask application in AWS Cloud as the tutorial example.
 1. Fill in three configuration files in ./ConfigTemplate folder. For personal.ini, `cloud_credentials` is formated in `credential_access_key:credential_secert_key`. 
 
 
-2. Run `python3 main.py` to start RPAC for CloudRetrievalViaDask application. 
+2. Run `python3 main.py` to start RPAC for CloudRetrievalViaDask application. With user-provided configurations, a pipeline will be generated in `./reproduce` folder.
 
 Example output:
 ```
