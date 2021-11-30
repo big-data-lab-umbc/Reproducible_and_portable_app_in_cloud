@@ -20,7 +20,10 @@ To use RPAC toolkit, make the following changes to your configuration:
 2. Run ```python3 main.py``` to execute the big data analytics.
 
 ## Getting Started
-Three-pointers to get you started:
+Three-pointers for experimental execution to get you started:
 - [First execution: get first execution with understanding and using RPAC toolkit](./docs/first_execution.md)
 - [Examples: easy to understand RPAC across three applications](./docs/examples.md)
 - [Reproduce: reproduce existing execution with RPAC](./docs/reproduce.md)
+
+End-to-end execution also provided in RPAC:
+- End-to-end: one-click execution with RPAC (To be updated)
