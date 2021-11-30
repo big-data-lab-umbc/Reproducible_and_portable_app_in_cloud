@@ -22,5 +22,5 @@ To use RPAC toolkit, make the following changes to your configuration:
 ## Getting Started
 Three-pointers to get you started:
 - [First execution: get first execution with understanding and using RPAC toolkit](./docs/first_execution.md)
-- [Examples: easy to understand RPAC across all domains](./docs/examples.md)
+- [Examples: easy to understand RPAC across three applications](./docs/examples.md)
 - [Reproduce: reproduce existing execution with RPAC](./docs/reproduce.md)
