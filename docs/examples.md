@@ -1,4 +1,4 @@
-## Examples: easy to understand RPAC across all domains
+## Examples: easy to understand RPAC across three applications
 
 The [examples](./examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy their example configurations from `./examples/application` to `./ConfigTemplate`.
 
