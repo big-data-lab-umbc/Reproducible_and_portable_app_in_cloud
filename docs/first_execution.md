@@ -23,7 +23,7 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 > Note: for the tutorial, we separate cloud provisioning with analytics execution. This step will only finish software and hardware provisioning of analytics automatically.
 
 
-3. Send the [analytics execution event](./AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via CloudRetrievalFunction AWS::Lambda::Function. Wait for stutas until `Execution result: succeeded`.
+3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via CloudRetrievalFunction AWS::Lambda::Function. Wait for stutas until `Execution result: succeeded`.
 
 The AWS::Lambda::Function resource url can be find at [AWS Lambda service](https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions). Submit your event from Lambda.
 
