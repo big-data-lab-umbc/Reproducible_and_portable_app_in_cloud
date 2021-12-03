@@ -1,6 +1,6 @@
 ## Examples: easy to understand RPAC across three applications
 
-The [examples](./examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy their example configurations from `./examples/application` to `./ConfigTemplate`.
+The [examples](../examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy their example configurations from `./examples/application` to `./ConfigTemplate`.
 
 # Spark-based big data analytics on virtual CPU nodes.
 We provide Spark-based parallel framework via the docker-based Spark engine virtual cluster provisioned by direct cloud services like AWS EMR with additional cloud resources like virtual network, container service and file system. 
