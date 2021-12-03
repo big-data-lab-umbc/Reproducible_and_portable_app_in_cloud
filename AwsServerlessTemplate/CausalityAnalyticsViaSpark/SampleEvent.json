@@ -1,0 +1,39 @@
+{
+    "Configurations": { 
+        "ec2":{
+            "accessKey": "AKIASHT77BI5S2QHPAPZ",
+            "secretKey": "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"
+        },
+        "awsRegion": "us-west-2",
+        "ec2KeyPath": "~/.ssh/id_rsa",
+        "bill":{
+            "EC2_price": 0.68,
+            "EMR_price": 0.17,
+            "VPC_price": 0.01,
+            "EBS_price": 0.1,
+            "data_size": 1.4
+        },
+        "instance_num": 3,
+        "source_data": {
+            "bucketname": "kddworkshop",
+            "prefix": "5v_linear_9.5M.csv",
+            "filename": "5v_linear_9.5M.csv",
+            "version": "null"
+        },
+        "output_ensemble_result": {
+            "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
+            "prefix": "CD_c5d.4xlarge/ensemble_result.csv",
+            "filename": "ensemble_result.csv"
+        },
+        "output_ensemble_event": {
+            "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
+            "prefix": "CD_c5d.4xlarge/event.json",
+            "filename": "event.json"
+        },
+        "command_line": "cd /home/hadoop/ensemble_causality_learning && spark-submit --master yarn --deploy-mode cluster --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=public.ecr.aws/e0a3g4z6/causality-ensemble --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_CLIENT_CONFIG=hdfs:///user/hadoop/config.json --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/etc/passwd:/etc/passwd:ro --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=public.ecr.aws/e0a3g4z6/causality-ensemble --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_CLIENT_CONFIG=hdfs:///user/hadoop/config.json --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/etc/passwd:/etc/passwd:ro --conf spark.dynamicAllocation.enabled=false --num-executors 8 --executor-cores 1 --executor-memory 3g --driver-memory 15g --py-files /home/hadoop/ensemble_causality_learning/sources.zip --files file:///home/hadoop/ensemble_causality_learning/5v_linear_9.5M.csv two_phase_algorithm_data.py 3 5v_linear_9.5M.csv 200 3 -v"
+    },
+    "Commands": {
+        "gitClone": "git clone https://github.com/xxxxxx/ensemble_causality_learning.git /home/hadoop/ensemble_causality_learning/",
+        "sparkSubmit": {"$ref": "#/Configurations/command_line"}
+    }
+}

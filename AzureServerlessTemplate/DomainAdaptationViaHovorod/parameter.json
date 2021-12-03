@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westus2"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "networkSecurityGroups": {
+            "value": [
+                {
+                    "name": "basicNsgStartlyResource-vnet-nic01",
+                    "id": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/networkSecurityGroups/basicNsgStartlyResource-vnet-nic01",
+                    "rules": [
+                        {
+                          "name": "sshallow",
+                          "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                          }
+                        }
+                    ]
+                }
+            ]
+        },
+        "networkInterfaceConfigurations": {
+            "value": [
+                {
+                    "name": "StartlyResource-vnet-nic01",
+                    "primary": true,
+                    "subnetId": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/virtualNetworks/StartlyResource-vnet/subnets/default",
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [],
+                    "enableAcceleratedNetworking": true,
+                    "nsgName": "basicNsgStartlyResource-vnet-nic01",
+                    "nsgId": "/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourceGroups/StartlyResource/providers/Microsoft.Network/networkSecurityGroups/basicNsgStartlyResource-vnet-nic01",
+                    "pipName": "publicIp-StartlyResource-vnet-nic01"
+                }
+            ]
+        },
+        "virtualMachineScaleSetName": {
+            "value": "DA-VMset"
+        },
+        "singlePlacementGroup": {
+            "value": "false"
+        },
+        "instanceCount": {
+            "value": "1"
+        },
+        "instanceSize": {
+            "value": "Standard_NC6s_v3"
+        },
+        "scaleInPolicy": {
+            "value": {
+                "rules": [
+                    "Default"
+                ]
+            }
+        },
+        "overprovision": {
+            "value": true
+        },
+        "upgradePolicy": {
+            "value": "Manual"
+        },
+        "adminUsername": {
+            "value": "azureuser"
+        },
+        "customData": {
+            "value": "#!/bin/bash\ncurl -fsSL https://get.docker.com -o get-docker.sh\nsudo sh get-docker.sh\nsudo service docker start\nsudo usermod -a -G docker azureuser\nsudo chmod 666 /var/run/docker.sock\nsudo apt install unzip\ncurl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash\ndistribution=$(. /etc/os-release;echo $ID$VERSION_ID) && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list\nsudo apt-get update\nsudo apt-get install -y nvidia-docker2\nsudo systemctl restart docker"
+        },
+        "platformFaultDomainCount": {
+            "value": "5"
+        }
+    }
+}
