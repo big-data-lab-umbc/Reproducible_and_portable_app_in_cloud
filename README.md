@@ -26,4 +26,4 @@ Three-pointers for experimental execution to get you started:
 - [Reproduce: reproduce existing execution with RPAC](./docs/reproduce.md)
 
 End-to-end execution also provided in RPAC:
-- End-to-end: one-click execution with RPAC (To be updated)
+- [End-to-end: one-click execution with RPAC](./docs/end_to_end.md)
