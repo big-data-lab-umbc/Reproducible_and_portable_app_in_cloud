@@ -26,7 +26,7 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via [Amazon EventBridge](https://us-west-2.console.aws.amazon.com/events/home?region=us-west-2#/eventbuses). Set the Event source to `custom.reproduce` and copy the generated `./reproduce/my_event.json` to Event detail box. Then scroll down the page and select `send` botton.
 
 <p align="center"><img src="./figures/eventbridge.png"/></p>
-<p align="center"><img src="./figures/submit_event.png"/></p>
+<p align="center"><img src="./figures/sendevent.png"/></p>
 
 
 4. The outputs and execution history will be stored at DynamoDB and S3 once execution done. The address are `reproduce_database` and `reproduce_storage` arguments that you provided in `./ConfigTemplate/resource.ini`. Users are able to scan and query execution history in [AWS Dynamodb](https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer).
