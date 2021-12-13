@@ -26,4 +26,4 @@ Cloud execution start.
 
 ```
 
-The outputs and execution history will be stored at DynamoDB and S3. The address are `reproduce_database` and `reproduce_storage` arguments that you provided in `./ConfigTemplate/resource.ini`.
+The outputs and execution history will be stored at DynamoDB and S3 once execution done. The address are `reproduce_database` and `reproduce_storage` arguments that you provided in `./ConfigTemplate/resource.ini`.
