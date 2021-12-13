@@ -147,13 +147,29 @@
                             {
                                 "Effect": "Allow",
                                 "Action": [
-                                    "s3:PutObject"
+                                    "s3:PutObject",
+                                    "s3:GetObject",
+                                    "s3:ListBucket",
+                                    "s3:ListBucketVersions",
+                                    "s3:GetObjectTagging",
+                                    "s3:GetObjectVersionTagging",
+                                    "s3:GetObjectVersion"
                                 ],
                                 "Resource": "arn:aws:s3:::*"
                             }
                         ]
                     }
-                ]
+                ],
+                "Events": {
+                    "SelfDefineEvent": {
+                        "Type": "EventBridgeRule",
+                        "Properties": {
+                            "Pattern": {
+                                "source": ["custom.reproduce"]
+                            }
+                        }
+                    }
+                }
             }
         },
         "S3ToDynamodb": {

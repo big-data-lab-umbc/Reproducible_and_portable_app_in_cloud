@@ -13,6 +13,9 @@ personalconfigFile = "./ConfigTemplate/personal.ini"
 reproduceFolder = "./reproduce"
 reproducePara = "pipeline_para.json"
 reproduceConf = "pipeline.json"
+reproduceEvent = "my_event.json"
+
+id_uuid = str(uuid.uuid4())
 
 
 def readsummary(): 
@@ -78,6 +81,16 @@ class Aws:
                 pass
         return para_dict
 
+    def event_control(self, event_dict, path, key, value):
+        if value == "":
+            pass
+        else:
+            try:
+                event_dict['Configurations'][path][key] = value
+            except:
+                pass
+        return event_dict
+
     def aws_deploy(self):
         #config
         with open(self.deploy_conf_path, "r") as json_file:
@@ -92,6 +105,18 @@ class Aws:
         #TODO: generate security group resources for each test
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
             json.dump(deploy_conf_dict, json_file, indent=4)
+
+        with open(self.depoly_event_path, "r") as json_file:
+            event_dict = json.load(json_file)
+        new_event_dict = event_dict
+        new_event_dict = self.event_control(new_event_dict,'ec2','accessKey',cloud_access_key)
+        new_event_dict = self.event_control(new_event_dict,'ec2','secretKey',cloud_secret_key)
+        new_event_dict = self.event_control(new_event_dict,'output_result','bucketname',reproduce_storage)
+        new_event_dict = self.event_control(new_event_dict,'output_result','prefix',id_uuid)
+        new_event_dict = self.event_control(new_event_dict,'output_event','bucketname',reproduce_storage)
+        new_event_dict = self.event_control(new_event_dict,'output_event','prefix',id_uuid)
+        with open(reproduceFolder+"/"+reproduceEvent, "w") as json_file:
+            json.dump(new_event_dict, json_file, indent=4)
 
         #lambda
         lambda_path = self.app_path+"lambda"
@@ -196,7 +221,6 @@ def main():
 
     print('{} {}'.format(str(template), template.execute()))
 
-    id_uuid = str(uuid.uuid4())
     if cloud_provider == "aws":
         call('aws configure set aws_access_key_id '+cloud_access_key, shell=True)
         call('aws configure set aws_secret_access_key '+cloud_secret_key, shell=True)
@@ -204,10 +228,20 @@ def main():
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam deploy --stack-name samautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
+        print("Resource provisioning success. Logs folder s3://%s/%s."%(reproduce_storage,id_uuid))
+        
+        with open(reproduceFolder+"/"+reproduceEvent, "r") as json_file:
+            event_dict = json.load(json_file)
+        event_detail = json.dumps(event_dict).replace('\"','\\"')
+        call('aws events put-events --entries \'[{"Source": "custom.reproduce", "DetailType": "RPAC", "Detail": "%s"}]\''%event_detail, shell=True)
+    
     elif cloud_provider == "azure":
         call('az login', shell=True)
 
         call('cd '+reproduceFolder+' && az deployment group create --name Deploy LocalTemplate --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
+
+    print("Cloud execution start.")
+
 if __name__ == "__main__":
     main()
     

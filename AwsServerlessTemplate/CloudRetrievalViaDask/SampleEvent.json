@@ -22,16 +22,16 @@
         },
         "output_result": {
             "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
-            "prefix": "CR_c5d.4xlarge/result.txt",
+            "prefix": "CR_c5d.4xlarge",
             "filename": "result.txt"
         },
         "output_event": {
             "bucketname": "aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3",
-            "prefix": "CR_c5d.4xlarge/event.json",
+            "prefix": "CR_c5d.4xlarge",
             "filename": "event.json"
         },
         "docker_image": "starlyxxx/dask-decision-tree-example",
-        "command_line": "docker run -v /home/ubuntu/ML_based_Cloud_Retrieval_Use_Case:/root/ML_based_Cloud_Retrieval_Use_Case starlyxxx/dask-decision-tree-example:latest sh -c 'cd ML_based_Cloud_Retrieval_Use_Case/Code && /usr/bin/python3.6 ml_based_cloud_retrieval_with_data_preprocessing.py'"
+        "command_line": "docker run -v /home/ubuntu/ML_based_Cloud_Retrieval_Use_Case:/root/ML_based_Cloud_Retrieval_Use_Case starlyxxx/dask-decision-tree-example:latest sh -c `cd ML_based_Cloud_Retrieval_Use_Case/Code && /usr/bin/python3.6 ml_based_cloud_retrieval_with_data_preprocessing.py`"
     },
     "Commands": {
         "gitClone": "wget -P /home/ubuntu/ https://kddworkshop.s3.us-west-2.amazonaws.com/ML_based_Cloud_Retrieval_Use_Case.zip",
