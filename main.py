@@ -228,7 +228,7 @@ def main():
 
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
-        call('cd '+reproduceFolder+' && sam deploy --stack-name samautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
+        call('cd '+reproduceFolder+' && sam deploy --stack-name rpacautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
         print("Resource provisioning success. Logs folder s3://%s/%s."%(reproduce_storage,id_uuid))
         
         if one_click:
