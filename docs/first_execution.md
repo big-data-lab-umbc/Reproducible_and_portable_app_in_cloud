@@ -23,15 +23,13 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 > Note: for the tutorial, we separate cloud provisioning with analytics execution (default `one_click = False` in [main.py](https://github.com/big-data-lab-umbc/Reproducible_and_portable_app_in_cloud/blob/b8aed7794df935ccdf9a5a193312955a1eab7e53/main.py#L19)). This step will only finish software and hardware provisioning of analytics automatically.
 
 
-3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via CloudRetrievalFunction AWS::Lambda::Function. Wait for stutas until `Execution result: succeeded`.
+3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via [Amazon EventBridge](https://us-west-2.console.aws.amazon.com/events/home?region=us-west-2#/eventbuses). Set the Event source to `custom.reproduce` and copy the generated `./reproduce/my_event.json` to Event detail box. Then scroll down the page and select `send` botton.
 
-The AWS::Lambda::Function resource url can be find at [AWS Lambda service](https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions). Submit your event from Lambda.
-
+<p align="center"><img src="./figures/eventbridge.png"/></p>
 <p align="center"><img src="./figures/submit_event.png"/></p>
-<p align="center"><img src="./figures/submit_successed.png"/></p>
 
 
-4. All analytics is done now. Users are able to scan and query execution history in [AWS Dynamodb](https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer).
+4. The outputs and execution history will be stored at DynamoDB and S3 once execution done. The address are `reproduce_database` and `reproduce_storage` arguments that you provided in `./ConfigTemplate/resource.ini`. Users are able to scan and query execution history in [AWS Dynamodb](https://us-west-2.console.aws.amazon.com/dynamodbv2/home?region=us-west-2#item-explorer).
 
 <p align="center"><img src="./figures/dynamodbscan.png"/></p>
 
