@@ -20,7 +20,7 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 
 ```
 
-> Note: for the tutorial, we separate cloud provisioning with analytics execution. This step will only finish software and hardware provisioning of analytics automatically.
+> Note: for the tutorial, we separate cloud provisioning with analytics execution (default `one_click = False` in [main.py](https://github.com/big-data-lab-umbc/Reproducible_and_portable_app_in_cloud/blob/b8aed7794df935ccdf9a5a193312955a1eab7e53/main.py#L19)). This step will only finish software and hardware provisioning of analytics automatically.
 
 
 3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via CloudRetrievalFunction AWS::Lambda::Function. Wait for stutas until `Execution result: succeeded`.
