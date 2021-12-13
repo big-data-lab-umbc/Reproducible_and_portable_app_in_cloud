@@ -23,7 +23,7 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 > Note: for the tutorial, we separate cloud provisioning with analytics execution (default `one_click = False` in [main.py](https://github.com/big-data-lab-umbc/Reproducible_and_portable_app_in_cloud/blob/b8aed7794df935ccdf9a5a193312955a1eab7e53/main.py#L19)). This step will only finish software and hardware provisioning of analytics automatically.
 
 
-3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via [Amazon EventBridge](https://us-west-2.console.aws.amazon.com/events/home?region=us-west-2#/eventbuses). Set the Event source to `custom.reproduce` and copy the generated `./reproduce/my_event.json` to Event detail box. Then scroll down the page and select `send` botton.
+3. Send the [analytics execution event](../AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json) via [Amazon EventBridge](https://us-west-2.console.aws.amazon.com/events/home?region=us-west-2#/eventbuses). Set 'Event source' to `custom.reproduce` and copy the generated `./reproduce/my_event.json` to 'Event detail' box. Then scroll down the page and select `send` botton.
 
 <p align="center"><img src="./figures/eventbridge.png"/></p>
 <p align="center"><img src="./figures/sendevent.png"/></p>
