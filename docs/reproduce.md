@@ -6,7 +6,7 @@ We use CloudRetrievalViaDask application in AWS Cloud as the tutorial example.
 
 After an application has been executed, clients can reproduce it with its execution history. We put an example in our public S3 bucket `s3://reproduceexampleofrpac`. Our RPAC toolkit helps the client generate a pipeline file based on their preferences. 
 
-> For example, in execution history as the figure shown, users enable to retrieval the source dataset, command line, pipeline file and execution events (reproducibility_config) from recorded storage addresses (scroll down to find more items.).
+> For example, in execution history as the figure shown, users enable to retrieval the source dataset, command line, pipeline file and execution events (reproducibility_config) from recorded storage addresses (scroll down to find more attributes.).
 <p align="center"><img src="./figures/db_item.png"/></p>
 <p align="center"><img src="./figures/s3_logs.png"/></p>
 
