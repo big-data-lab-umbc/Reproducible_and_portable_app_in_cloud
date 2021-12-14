@@ -14,10 +14,28 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
 ## Usage
+
+- `main.py` To perform RPAC of an experiment on a cloud.
+
+```
+usage: main.py [-h] [--execution_history EXECUTION_HISTORY] [--one_click]
+
+RPAC Toolkit.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --execution_history EXECUTION_HISTORY
+                        Folder name of execution history to reproduce
+  --one_click           Allow one_click execution to be used by RPAC, implies
+                        '--one_click'
+```
+
 To use RPAC toolkit, make the following changes to your configuration:
 
 1. Update configurations [resource.ini](./ConfigTemplate/resource.ini), [application.ini](./ConfigTemplate/application.ini), [personal.ini](./ConfigTemplate/personal.ini) in ConfigTemplate folder.
 2. Run ```python3 main.py``` to execute the big data analytics.
+
+Example usage: `python3 main.py --execution_history e4bc06ff-603d-4416-899c-b217802efb19`, `python3 main.py --one_click`
 
 ## Getting Started
 Three-pointers for experimental execution to get you started:
