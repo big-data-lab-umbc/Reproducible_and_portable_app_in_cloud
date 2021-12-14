@@ -10,7 +10,7 @@ After an application has been executed, clients can reproduce it with its execut
 <p align="center"><img src="./figures/db_item.png"/></p>
 <p align="center"><img src="./figures/s3_logs.png"/></p>
 
-1. Follow the address in execution history as shown in the figure, download all execution history files from storage folder (s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/). As example, we provided an downloaded folder in [ExecutionHistory](../ExecutionHistory).
+1. Follow the address in the database as shown in the figure, download execution history folder from storage. As an example, we provided a downloaded folder in [ExecutionHistory](../ExecutionHistory).
 
 2. Provide user personal information in `./ConfigTemplate/personal.ini`. 
 
