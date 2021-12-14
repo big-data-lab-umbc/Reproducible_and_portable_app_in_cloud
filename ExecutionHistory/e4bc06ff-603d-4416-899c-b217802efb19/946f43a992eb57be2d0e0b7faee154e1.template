@@ -36,7 +36,7 @@
         },
         "SimpleTableName": {
             "Type": "String",
-            "Default": "samautomation-ResultsDatabase"
+            "Default": "reproduceexampleofrpac"
         }
     },
     "Resources": {
@@ -118,10 +118,13 @@
                 },
                 "MaxSize": "10",
                 "MinSize": "1",
-                "MetricsCollection" : [ 
+                "MetricsCollection": [
                     {
-                        "Granularity" : "1Minute",
-                        "Metrics" : ["GroupInServiceInstances", "GroupPendingInstances"]
+                        "Granularity": "1Minute",
+                        "Metrics": [
+                            "GroupInServiceInstances",
+                            "GroupPendingInstances"
+                        ]
                     }
                 ],
                 "VPCZoneIdentifier": [
@@ -136,7 +139,7 @@
             "Properties": {
                 "Handler": "app.lambda1_handler",
                 "Runtime": "python3",
-                "CodeUri": "lambda/",
+                "CodeUri": "s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/7be7732a9d32fbc7132428871b3c7d29",
                 "Description": "Created by Starly. Cloud Retrieval AWS Lambda function.",
                 "Timeout": 900,
                 "Environment": {
@@ -171,7 +174,9 @@
                         "Type": "EventBridgeRule",
                         "Properties": {
                             "Pattern": {
-                                "source": ["custom.reproduce"]
+                                "source": [
+                                    "custom.reproduce"
+                                ]
                             }
                         }
                     }
@@ -183,7 +188,7 @@
             "Properties": {
                 "Handler": "app.lambda2_handler",
                 "Runtime": "python3",
-                "CodeUri": "lambda/",
+                "CodeUri": "s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/7be7732a9d32fbc7132428871b3c7d29",
                 "Description": "Created by Starly. AWS Lambda function to get files from s3 to dynamodb for reproducibility.",
                 "Timeout": 120,
                 "MemorySize": 512,

@@ -4,6 +4,8 @@ import yaml
 import shutil 
 import os
 import uuid
+import argparse
+import glob
 from subprocess import check_output, Popen, call, PIPE, STDOUT
 
 resconfigFile = "./ConfigTemplate/resource.ini"
@@ -68,6 +70,7 @@ class Aws:
         #self.para_path = self.app_path+"parameter.json"
         self.deploy_conf_path = self.app_path+"deploy_config.json"
         self.deploy_event_path = self.app_path+"SampleEvent.json"
+        self.deploy_lambda_path = self.app_path+"lambda"
 
     def __str__(self):
         return '{} the aws template'.format(self.name)
@@ -89,11 +92,20 @@ class Aws:
             try:
                 event_dict['Configurations'][path][key] = value
             except:
-                pass
+                if path == 'ec2':
+                    event_dict['Configurations'].update({'ec2': {"accessKey": value,"secretKey": ""}})
+                elif path == '':
+                    event_dict['Configurations'][key] = value
         return event_dict
 
+    def reproduce_args(self,args):
+        self.app_path = './ExecutionHistory/%s/'%args.execution_history
+        self.deploy_conf_path = glob.glob(self.app_path + "/*.template", recursive = True)[0]
+        self.deploy_event_path = glob.glob(self.app_path + "/event.json", recursive = True)[0]
+        self.deploy_lambda_path = glob.glob(self.app_path + "/*_FILES", recursive = True)[0]
+        
     def aws_deploy(self):
-        #config
+        #pipeline
         with open(self.deploy_conf_path, "r") as json_file:
             deploy_conf_dict = json.load(json_file)
         deploy_new_conf_dict = deploy_conf_dict
@@ -108,6 +120,7 @@ class Aws:
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
             json.dump(deploy_conf_dict, json_file, indent=4)
 
+        #event
         with open(self.deploy_event_path, "r") as json_file:
             event_dict = json.load(json_file)
         new_event_dict = event_dict
@@ -117,13 +130,14 @@ class Aws:
         new_event_dict = self.event_control(new_event_dict,'output_result','prefix',id_uuid)
         new_event_dict = self.event_control(new_event_dict,'output_event','bucketname',reproduce_storage)
         new_event_dict = self.event_control(new_event_dict,'output_event','prefix',id_uuid)
+        new_event_dict = self.event_control(new_event_dict,'','docker_image',experiment_docker)
+        new_event_dict = self.event_control(new_event_dict,'','command_line',command)
         with open(reproduceFolder+"/"+reproduceEvent, "w") as json_file:
             json.dump(new_event_dict, json_file, indent=4)
 
         #lambda
-        lambda_path = self.app_path+"lambda"
         target_path = reproduceFolder+"/lambda"
-        shutil.copytree(lambda_path, target_path)
+        shutil.copytree(self.deploy_lambda_path, target_path)
         return 'start deploying on aws'
 
 class Azure:
@@ -148,6 +162,9 @@ class Azure:
             except:
                 pass
         return para_dict
+
+    def reproduce_args(self,args):
+        pass
 
     def azure_deploy(self):
         #para
@@ -205,11 +222,17 @@ class Adapter:
 
 def main():
 
-    execution_history = False
-    one_click = False
+    parser = argparse.ArgumentParser(description='RPAC Toolkit.')
+    parser.add_argument('--execution_history', type=str,
+                        default="", help='Folder name of execution history to reproduce')
+    parser.add_argument('--one_click', action="store_true",
+                        default=False, help="Allow one_click execution to be used by RPAC, implies '--one_click'")
+    args = parser.parse_args()
 
-    # if len(sys.argv[1:]) >= 1:
-    #     execution_history = sys.argv[1]
+    if args.execution_history:
+        if not os.path.isdir('./ExecutionHistory/%s'%args.execution_history):
+            print("Can't find execution history folder ./ExecutionHistory/%s"%args.execution_history)
+            exit(0)
 
     for files in os.listdir(reproduceFolder):
         path = os.path.join(reproduceFolder, files)
@@ -220,9 +243,13 @@ def main():
 
     if cloud_provider == "aws":
         Cloud = Aws(application)
+        if args.execution_history:
+            Cloud.reproduce_args(args)
         template=Adapter(Cloud, dict(execute=Cloud.aws_deploy))
     elif cloud_provider == "azure":
         Cloud = Azure(application)
+        if args.execution_history:
+            Cloud.reproduce_args(args)
         template=Adapter(Cloud, dict(execute=Cloud.azure_deploy))
     else:
         raise SystemExit("NOT IMPLEMENTED CLOUD, currect support aws, azure")
@@ -235,10 +262,10 @@ def main():
 
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
-        call('cd '+reproduceFolder+' && sam deploy --stack-name rpacautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload'%(reproduce_storage,id_uuid), shell=True)
+        call('cd '+reproduceFolder+' && sam deploy --stack-name rpacautoanalytics --s3-bucket %s --s3-prefix %s --capabilities CAPABILITY_IAM --no-confirm-changeset --debug --force-upload --use-json'%(reproduce_storage,id_uuid), shell=True)
         print("Resource provisioning success. Logs folder s3://%s/%s."%(reproduce_storage,id_uuid))
         
-        if one_click:
+        if args.one_click:
             with open(reproduceFolder+"/"+reproduceEvent, "r") as json_file:
                 event_dict = json.load(json_file)
             event_detail = json.dumps(event_dict).replace('\"','\\"')

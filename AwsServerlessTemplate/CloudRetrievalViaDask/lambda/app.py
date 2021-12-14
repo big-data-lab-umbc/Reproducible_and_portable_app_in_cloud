@@ -83,7 +83,7 @@ def lambda1_handler(event, context):
         "docker pull "+event['Configurations']['docker_image'],\
         ssm_client)
     send_command_to_master(masterInstanceId,\
-        event['Commands']['gitClone'],\
+        event['Commands']['bash'],\
         ssm_client)
 
     send_command_to_master(masterInstanceId,\
