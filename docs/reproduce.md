@@ -10,14 +10,26 @@ After an application has been executed, clients can reproduce it with its execut
 <p align="center"><img src="./figures/db_item.png"/></p>
 <p align="center"><img src="./figures/s3_logs.png"/></p>
 
-1. Follow the address in execution history as shown in the figure, download all execution history files from storage folder (s3://reproduceexampleofrpac/a7bc55a5-c214-4cd4-b2e8-53d50ecc1546/). 
+1. Follow the address in execution history as shown in the figure, download all execution history files from storage folder (s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/). As example, we provided an downloaded folder in [ExecutionHistory](../ExecutionHistory).
 
-2. Replace tamplate files in `./AwsServerlessTemplate/CloudRetrievalViaDask` folder with the downloaded files. For example: 
+2. Provide user personal information in `./ConfigTemplate/personal.ini`. 
 
-   - The lambda unzip folder (like "24a56cc8bd10fd100d94e32849d07b3f") -> ./AwsServerlessTemplate/CloudRetrievalViaDask/lambda
-   - The pipline file (like "09a137ffc68da4be5c313d6f10e83d82.template") -> ./AwsServerlessTemplate/CloudRetrievalViaDask/deploy_config.json
-   - The execution event file (like "event.json") -> ./AwsServerlessTemplate/CloudRetrievalViaDask/SampleEvent.json
+### Reproduction with the same environment and configuration
 
-3. Also provide user personal information in `./ConfigTemplate/personal.ini`. If user want to reproduce execution with different application or resource configurations, please also edit `./ConfigTemplate/application.ini` and `./ConfigTemplate/resource.ini`.
+3. Run `main.py` with `--execution_history` args (for example `python3 main.py --execution_history e4bc06ff-603d-4416-899c-b217802efb19`) to start RPAC reproduction. With user-provided personal information and historical execution, a new pipeline will be generated in `./reproduce` folder. RPAC will automatically start data analytics based on this folder.
 
-4. Run `python3 main.py` to start RPAC for reproduction. With user-provided personal information and historical execution, a new pipeline will be generated in `./reproduce` folder.
+### Reproduction in a different environment
+
+3. Provide new environment setup in `./ConfigTemplate/resource.ini` (mostly INSTANCE_TYPE and instance_num). 
+
+4. Run `main.py` with `--execution_history` args.
+
+### Reproduction with a different application configuration
+
+3. Provide new application setup in `./ConfigTemplate/application.ini`.
+
+4. Run `main.py` with `--execution_history` args.
+
+### Reproduction across clouds
+
+(To be updated.)
