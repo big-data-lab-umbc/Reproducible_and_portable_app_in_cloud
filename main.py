@@ -107,7 +107,7 @@ class Aws:
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
             json.dump(deploy_conf_dict, json_file, indent=4)
 
-        with open(self.depoly_event_path, "r") as json_file:
+        with open(self.deploy_event_path, "r") as json_file:
             event_dict = json.load(json_file)
         new_event_dict = event_dict
         new_event_dict = self.event_control(new_event_dict,'ec2','accessKey',cloud_access_key)
