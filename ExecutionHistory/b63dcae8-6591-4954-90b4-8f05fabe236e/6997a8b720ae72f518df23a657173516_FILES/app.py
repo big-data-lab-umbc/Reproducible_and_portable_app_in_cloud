@@ -47,7 +47,7 @@ def send_command_to_master(InstanceId,command,ssm_client):
         print('SSM failed')
 
 def s3_put_object(filename,path):
-    return "aws s3 cp /home/ubuntu/%s s3://%s"%(filename,path)
+    return "aws s3 cp /home/ubuntu/%s s3://%s"%(filename,path) #aws s3 cp /home/ubuntu/result.txt s3://aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3/26d1eef0-6875-42eb-b987-689213e25c66/result.txt
 
 def s3_object_version(bucketname,s3prefix):
     return "aws s3api list-object-versions --bucket %s --prefix %s --output text --query 'Versions[?IsLatest].[VersionId]'"%(bucketname,s3prefix)
@@ -64,6 +64,8 @@ def s3_get_object(bucketname,s3prefix,localpath,version):
 
 def lambda1_handler(event, context):
     #pprint.pprint(dict(os.environ), width = 1)
+    print("###########",event["detail"])
+    event = event["detail"]
 
     credentials = [event['Configurations']['awsRegion'],event['Configurations']['ec2']['accessKey'],event['Configurations']['ec2']['secretKey']]
     event['Configurations'].pop('ec2')
@@ -90,9 +92,15 @@ def lambda1_handler(event, context):
     print('Setup success, start domain adaptation...')
 
     try:
-        send_command_to_master(masterInstanceId,\
-            event['Configurations']['command_line']+" | tee -a /home/ubuntu/"+event['Configurations']['output_result']["filename"],\
-            ssm_client)
+        if "`" in event['Configurations']['command_line']:
+            real_command = event['Configurations']['command_line'].replace("`","'")
+            send_command_to_master(masterInstanceId,\
+                real_command+" | tee -a /home/ubuntu/"+event['Configurations']['output_result']["filename"],\
+                ssm_client)
+        else:
+            send_command_to_master(masterInstanceId,\
+                event['Configurations']['command_line']+" | tee -a /home/ubuntu/"+event['Configurations']['output_result']["filename"],\
+                ssm_client)
         print('Program success')
     except Exception as e:
         print('CR went wrong, please check logs.')
@@ -102,18 +110,21 @@ def lambda1_handler(event, context):
     
     # copy result from VM to S3
     send_command_to_master(masterInstanceId,\
-        s3_put_object(event['Configurations']['output_result']["filename"],event['Configurations']['output_result']['bucketname']+"/"+event['Configurations']['output_result']['prefix']),\
+    'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install',\
+    ssm_client)
+    send_command_to_master(masterInstanceId,\
+        s3_put_object(event['Configurations']['output_result']["filename"],event['Configurations']['output_result']['bucketname']+"/"+event['Configurations']['output_result']['prefix']+"/"+event['Configurations']['output_result']['filename']),\
         ssm_client)
-    result_version = s3_get_latest_version(event['Configurations']['output_result']["bucketname"],event['Configurations']['output_result']["prefix"])
+    result_version = s3_get_latest_version(event['Configurations']['output_result']["bucketname"],event['Configurations']['output_result']["prefix"]+"/"+event['Configurations']['output_result']['filename'])
 
     # copy event from VM to S3
     send_command_to_master(masterInstanceId,\
-        "echo "+json.dumps(event).replace("\"","\\'")+" | tee -a /home/ubuntu/"+event['Configurations']['output_event']["filename"],\
+        "echo "+json.dumps(event).replace('\"','\\"').replace('`','`\'').replace('`\'','\`\'',1)+" | tee -a /home/ubuntu/"+event['Configurations']['output_event']["filename"],\
         ssm_client)
     send_command_to_master(masterInstanceId,\
-        s3_put_object(event['Configurations']['output_event']["filename"],event['Configurations']['output_event']['bucketname']+"/"+event['Configurations']['output_event']['prefix']),\
+        s3_put_object(event['Configurations']['output_event']["filename"],event['Configurations']['output_event']['bucketname']+"/"+event['Configurations']['output_event']['prefix']+"/"+event['Configurations']['output_event']['filename']),\
         ssm_client)
-    event_version = s3_get_latest_version(event['Configurations']['output_event']["bucketname"],event['Configurations']['output_event']["prefix"])
+    event_version = s3_get_latest_version(event['Configurations']['output_event']["bucketname"],event['Configurations']['output_event']["prefix"]+"/"+event['Configurations']['output_event']['filename'])
 
     # caculate cost
     cost = (exe_time*event['Configurations']['bill']['EC2_price']*event['Configurations']['instance_num'])\
@@ -129,12 +140,13 @@ def lambda1_handler(event, context):
         str(cost),\
         str(exe_time),\
         str(exe_time*cost),\
-        "s3://"+event['Configurations']['source_data']["bucketname"]+"/"+event['Configurations']['source_data']["prefix"],\
+        "s3://"+event['Configurations']['source_data']["bucketname"]+"/"+event['Configurations']['source_data']["filename"],\
         event['Configurations']['source_data']["version"],\
-        "s3://"+event['Configurations']['output_result']["bucketname"]+"/"+event['Configurations']['output_result']["prefix"],\
+        "s3://"+event['Configurations']['output_result']["bucketname"]+"/"+event['Configurations']['output_result']["prefix"]+"/"+event['Configurations']['output_result']['filename'],\
         str(result_version),\
-        "s3://"+event['Configurations']['output_event']["bucketname"]+"/"+event['Configurations']['output_event']["prefix"],\
-        str(event_version))
+        "s3://"+event['Configurations']['output_event']["bucketname"]+"/"+event['Configurations']['output_event']["prefix"]+"/"+event['Configurations']['output_event']['filename'],\
+        str(event_version),\
+        "s3://"+event['Configurations']['output_event']["bucketname"]+"/"+event['Configurations']['output_event']["prefix"])
     send_command_to_master(masterInstanceId,\
         "echo "+record_json+" | tee -a /home/ubuntu/temp.json",\
         ssm_client)
@@ -161,7 +173,7 @@ def lambda2_handler(event, context):
 
         table = boto3.resource('dynamodb').Table(table_name)
         
-        #item={'id':key, 'DateTime':timestamp, 'Status':json_dict, 'Command Line':command_line, 'Budgetary_cost':Budgetary_cost, 'Execution_time':Execution_time, 'Performance_price_ratio':Performance_price_ratio, 'source_data':source_data, 'ensemble_result':ensemble_result, 'reproducibility_config':reproducibility_config}
+        #item={'id':key, 'DateTime':timestamp, 'Status':json_dict, 'Command Line':command_line, 'Budgetary_cost':Budgetary_cost, 'Execution_time':Execution_time, 'Performance_price_ratio':Performance_price_ratio, 'source_data':source_data, 'ensemble_result':ensemble_result, 'trigger_event':trigger_event}
         #table.put_item(Item=item)
         json_dict['id'] = timestamp
         json_dict_temp = json_dict
@@ -174,12 +186,18 @@ def lambda2_handler(event, context):
         print("Error processing object {} from bucket {}. Event {}".format(key, bucket, json.dumps(event, indent=2)))
         raise e
 
-def generate_record(command_line,Budgetary_cost,Execution_time,Performance_price_ratio,source_data,source_data_verion,program_result,program_result_version,reproducibility_config,reproducibility_config_version):
+def generate_record(command_line,Budgetary_cost,Execution_time,Performance_price_ratio,source_data,source_data_verion,program_result,program_result_version,trigger_event,trigger_event_version,reproducibility_folder):
     record_dict = {'command_line':command_line, \
         'budgetary_cost':Budgetary_cost, 'execution_time':Execution_time, 'performance_price_ratio':Performance_price_ratio, \
         'source_data':source_data, 'source_data_verion':source_data_verion, \
         'program_result':program_result, 'program_result_version':program_result_version, \
-        'reproducibility_config':reproducibility_config, 'reproducibility_config_version':reproducibility_config_version}
+        'trigger_event':trigger_event, 'trigger_event_version':trigger_event_version, \
+        'execution_history':reproducibility_folder}
     replacetemp = json.dumps(record_dict)
     result = replacetemp.replace('"','\\"')
+    try:
+        result = result.replace('`','`\'')  #` ` -> `' `'
+        result = result.replace('`\'','\`\'',1) #`' `' -> \`' `'
+    except:
+        pass
     return result

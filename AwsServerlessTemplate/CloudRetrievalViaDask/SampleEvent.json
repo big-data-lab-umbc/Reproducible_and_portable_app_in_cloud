@@ -34,7 +34,6 @@
         "command_line": "docker run -v /home/ubuntu/ML_based_Cloud_Retrieval_Use_Case:/root/ML_based_Cloud_Retrieval_Use_Case starlyxxx/dask-decision-tree-example:latest sh -c `cd ML_based_Cloud_Retrieval_Use_Case/Code && /usr/bin/python3.6 ml_based_cloud_retrieval_with_data_preprocessing.py`"
     },
     "Commands": {
-        "gitClone": "wget -P /home/ubuntu/ https://kddworkshop.s3.us-west-2.amazonaws.com/ML_based_Cloud_Retrieval_Use_Case.zip",
-        "CommandSubmit": {"$ref": "#/Configurations/command_line"}
+        "gitClone": "wget -P /home/ubuntu/ https://kddworkshop.s3.us-west-2.amazonaws.com/ML_based_Cloud_Retrieval_Use_Case.zip"
     }
 }

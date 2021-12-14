@@ -1,0 +1,47 @@
+111 ['../Data/raw_data/VNP03MOD-VIIRS-Coordinates/VNP03MOD.A2017001.0212.001.2017277085405.nc', '../Data/raw_data/VNP03MOD-VIIRS-Coordinates/VNP03MOD.A2017001.0218.001.2017277084808.nc']
+222 ../Data/raw_data/CALIPSO-L2-01km-CLayer/CAL_LID_L2_01kmCLay-Standard-V4-10.2017-01-01T01-27-54ZD.hdf
+333 2017-01-01T01-27-54ZD
+[0 1]
+Find collocation pixels for:
+File 1: CAL_LID_L2_01kmCLay-Standard-V4-10.2017-01-01T01-27-54ZD.hdf
+File 2: VNP03MOD.A2017001.0212.001.2017277085405.nc
+Collocated pixels:   204
+
+Find collocation pixels for:
+File 1: CAL_LID_L2_01kmCLay-Standard-V4-10.2017-01-01T01-27-54ZD.hdf
+File 2: VNP03MOD.A2017001.0218.001.2017277084808.nc
+Collocated pixels:   110
+
+(16, 204)
+(16, 110)
+              M01           M02  ...           M15           M16
+0        0.222668      0.174368  ...      8.555204      7.722953
+1        0.262632      0.223388  ...      8.295892      7.555663
+2        0.284403      0.247578  ...      8.267690      7.538357
+3    65533.000000  65533.000000  ...  65533.000000  65533.000000
+4        0.224487      0.177347  ...      8.535060      7.708531
+..            ...           ...  ...           ...           ...
+309  65533.000000  65533.000000  ...  65533.000000  65533.000000
+310  65533.000000  65533.000000  ...  65533.000000  65533.000000
+311  65533.000000  65533.000000  ...  65533.000000  65533.000000
+312  65533.000000  65533.000000  ...  65533.000000  65533.000000
+313  65533.000000  65533.000000  ...  65533.000000  65533.000000
+
+[314 rows x 16 columns]
+(219, 16) (219,)
+(95, 16) (95,)
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training RandomForest
+Training Data Performance
+0.8858447488584474
+Testing Data Performance
+0.8947368421052632
+Done. Execution time =  0.010892940362294516  h

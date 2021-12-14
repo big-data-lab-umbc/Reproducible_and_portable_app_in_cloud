@@ -16,7 +16,6 @@ reproduceConf = "pipeline.json"
 reproduceEvent = "my_event.json"
 
 id_uuid = str(uuid.uuid4())
-one_click = False
 
 
 def readsummary(): 
@@ -68,6 +67,7 @@ class Aws:
 
         #self.para_path = self.app_path+"parameter.json"
         self.deploy_conf_path = self.app_path+"deploy_config.json"
+        self.deploy_event_path = self.app_path+"SampleEvent.json"
 
     def __str__(self):
         return '{} the aws template'.format(self.name)
@@ -103,6 +103,7 @@ class Aws:
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'Ec2KeyPath',your_key_path)
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'SubnetId',SUBNET_ID)
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'VpcId',VPC_ID)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'SimpleTableName',reproduce_database)
         #TODO: generate security group resources for each test
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
             json.dump(deploy_conf_dict, json_file, indent=4)
@@ -203,6 +204,12 @@ class Adapter:
         return str(self.obj)
 
 def main():
+
+    execution_history = False
+    one_click = False
+
+    # if len(sys.argv[1:]) >= 1:
+    #     execution_history = sys.argv[1]
 
     for files in os.listdir(reproduceFolder):
         path = os.path.join(reproduceFolder, files)

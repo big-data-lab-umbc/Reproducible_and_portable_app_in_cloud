@@ -27,7 +27,7 @@ Parameters:
     Default: EC2SSM
   SimpleTableName:
     Type: String
-    Default: samautomation-ResultsDatabase-1SBXBW6SXOWPH
+    Default: reproduceexampleofrpac
 Resources:
   CRLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
@@ -90,6 +90,11 @@ Resources:
           Fn::GetAtt: CRLaunchTemplate.LatestVersionNumber
       MaxSize: '10'
       MinSize: '1'
+      MetricsCollection:
+      - Granularity: 1Minute
+        Metrics:
+        - GroupInServiceInstances
+        - GroupPendingInstances
       VPCZoneIdentifier:
       - Ref: SubnetId
   CloudRetrievalFunction:
@@ -97,7 +102,7 @@ Resources:
     Properties:
       Handler: app.lambda1_handler
       Runtime: python3.6
-      CodeUri: CloudRetrievalFunction
+      CodeUri: s3://reproduceexampleofrpac/b63dcae8-6591-4954-90b4-8f05fabe236e/6997a8b720ae72f518df23a657173516
       Description: Created by Starly. Cloud Retrieval AWS Lambda function.
       Timeout: 900
       Environment:
@@ -110,13 +115,26 @@ Resources:
         - Effect: Allow
           Action:
           - s3:PutObject
+          - s3:GetObject
+          - s3:ListBucket
+          - s3:ListBucketVersions
+          - s3:GetObjectTagging
+          - s3:GetObjectVersionTagging
+          - s3:GetObjectVersion
           Resource: arn:aws:s3:::*
+      Events:
+        SelfDefineEvent:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source:
+              - custom.reproduce
   S3ToDynamodb:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda2_handler
       Runtime: python3.6
-      CodeUri: S3ToDynamodb
+      CodeUri: s3://reproduceexampleofrpac/b63dcae8-6591-4954-90b4-8f05fabe236e/6997a8b720ae72f518df23a657173516
       Description: Created by Starly. AWS Lambda function to get files from s3 to
         dynamodb for reproducibility.
       Timeout: 120
