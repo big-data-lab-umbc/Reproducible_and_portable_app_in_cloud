@@ -1,8 +1,9 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=xxxxxx;AccountKey=xxxxxx;EndpointSuffix=core.windows.net",
-    "AzureCosmosDBConnectionString": "AccountEndpoint=https://causalityresult.documents.azure.com:443/;AccountKey=xxxxxx;", 
-    "FUNCTIONS_WORKER_RUNTIME": "python"
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=causalityncerxyroxb2sg;AccountKey=htn36oDUUAsHL9M9T+DEVtsC38Brt+jBo1inKrGJv2gTqj58vYFmSU7VfvGZxxxxxxxxxxxxxxx;EndpointSuffix=core.windows.net",
+    "AzureCosmosDBConnectionString": "AccountEndpoint=https://causalityresult.documents.azure.com:443/;AccountKey=9ds3eurlNGyI1cNr7GfTaKqJdr8heWluyTnun4URQsCMvfBlpF3Zawogn5dxxxxxxxxxxxxxxxx;", 
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AZURE_SUBSCRIPTION_ID": "250c38e9-47a3-4d89-bc68-xxxxxxxxxxxx"
   }
 }

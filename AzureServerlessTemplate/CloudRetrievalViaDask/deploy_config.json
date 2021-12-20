@@ -53,7 +53,7 @@
             "type": "array"
         },
         "virtualMachineScaleSetName": {
-            "defaultValue":"CR-VMset",
+            "defaultValue":"RPAC",
             "type": "string"
         },
         "singlePlacementGroup": {

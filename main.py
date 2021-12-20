@@ -6,6 +6,7 @@ import os
 import uuid
 import argparse
 import glob
+import time
 from subprocess import check_output, Popen, call, PIPE, STDOUT
 
 resconfigFile = "./ConfigTemplate/resource.ini"
@@ -23,12 +24,12 @@ id_uuid = str(uuid.uuid4())
 def readsummary(): 
     config = configparser.ConfigParser()
     config.read(personalconfigFile)
-    return (str(config['summary']['cloud']),str(config['summary']['application']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['cloud_credentials']))
+    return (str(config['summary']['cloud']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['cloud_credentials']))
 
 def readparameter():
     config = configparser.ConfigParser() 
     config.read(appconfigFile)
-    return (str(config['parameter']['experiment_docker']),str(config['parameter']['experiment_name']),str(config['parameter']['data']),str(config['parameter']['command']),str(config['parameter']['git_link']),str(config['parameter']['bootstrap']))
+    return (str(config['parameter']['application']),str(config['parameter']['experiment_docker']),str(config['parameter']['experiment_name']),str(config['parameter']['data']),str(config['parameter']['command']),str(config['parameter']['git_link']),str(config['parameter']['bootstrap']))
 
 def readawscloud():
     config = configparser.ConfigParser() 
@@ -50,14 +51,14 @@ def readreprodeuce():
     config.read(resconfigFile)
     return (str(config['reproduce']['reproduce_storage']),str(config['reproduce']['reproduce_database']))
 
-cloud_provider, application, your_key_path, your_key_name, your_git_username, your_git_password, cloud_credentials = readsummary()  #str
+cloud_provider, your_key_path, your_key_name, your_git_username, your_git_password, cloud_credentials = readsummary()  #str
 # vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
-experiment_docker, experiment_name, data, command, git_link, bootstrap = readparameter()   #str
+application, experiment_docker, experiment_name, data, command, git_link, bootstrap = readparameter()   #str
 reproduce_storage, reproduce_database = readreprodeuce()
+cloud_access_key = cloud_credentials.split(":")[0]
+cloud_secret_key = cloud_credentials.split(":")[1]
 if cloud_provider == "aws":
     instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
-    cloud_access_key = cloud_credentials.split(":")[0]
-    cloud_secret_key = cloud_credentials.split(":")[1]
 elif cloud_provider == "azure":
     REGION, resourceGroupID, resourceGroupName, instance_num, INSTANCE_TYPE = readazurecloud() #str
 
@@ -104,6 +105,9 @@ class Aws:
         self.deploy_event_path = glob.glob(self.app_path + "/event.json", recursive = True)[0]
         self.deploy_lambda_path = glob.glob(self.app_path + "/*_FILES", recursive = True)[0]
         
+    def terminate_when_finish(self):
+        terminateCMD = "aws cloudformation delete-stack --stack-name rpacautoanalytics"
+
     def aws_deploy(self):
         #pipeline
         with open(self.deploy_conf_path, "r") as json_file:
@@ -166,6 +170,9 @@ class Azure:
     def reproduce_args(self,args):
         pass
 
+    def terminate_when_finish(self):
+        pass
+
     def azure_deploy(self):
         #para
         with open(self.para_path, "r") as json_file:
@@ -173,7 +180,7 @@ class Azure:
         parameter_new_dict = parameter_dict
         parameter_new_dict = self.para_control(parameter_new_dict,'instanceSize',INSTANCE_TYPE)
         parameter_new_dict = self.para_control(parameter_new_dict,'instanceCount',instance_num)
-        parameter_new_dict = self.para_control(parameter_new_dict,'customData',bootstrap)
+        #parameter_new_dict = self.para_control(parameter_new_dict,'customData',bootstrap)
         with open(reproduceFolder+"/"+reproducePara, "w") as json_file:
             json.dump(parameter_new_dict, json_file, indent=4)
 
@@ -220,6 +227,16 @@ class Adapter:
     def __str__(self):     
         return str(self.obj)
 
+def get_vmss_ip(resourceGroupName):
+    call('az vmss list-instance-public-ips --resource-group %s --name CR-VMset | tee ./temp.json'%resourceGroupName, shell=True)
+    with open("./temp.json", "r") as json_file:
+        list_instance_public_ips = json.load(json_file)
+    os.remove("./temp.json")
+
+    vmss_ip = list_instance_public_ips[0]['ipAddress']
+    print(vmss_ip)
+    return vmss_ip #string
+
 def main():
 
     parser = argparse.ArgumentParser(description='RPAC Toolkit.')
@@ -227,6 +244,8 @@ def main():
                         default="", help='Folder name of execution history to reproduce')
     parser.add_argument('--one_click', action="store_true",
                         default=False, help="Allow one_click execution to be used by RPAC, implies '--one_click'")
+    parser.add_argument('--terminate', action="store_true",
+                        default=False, help="Terminate all cloud resources after execution finished, implies '--terminate'")
     args = parser.parse_args()
 
     if args.execution_history:
@@ -245,11 +264,15 @@ def main():
         Cloud = Aws(application)
         if args.execution_history:
             Cloud.reproduce_args(args)
+        if args.terminate:
+            Cloud.terminate_when_finish
         template=Adapter(Cloud, dict(execute=Cloud.aws_deploy))
     elif cloud_provider == "azure":
         Cloud = Azure(application)
         if args.execution_history:
             Cloud.reproduce_args(args)
+        if args.terminate:
+            Cloud.terminate_when_finish
         template=Adapter(Cloud, dict(execute=Cloud.azure_deploy))
     else:
         raise SystemExit("NOT IMPLEMENTED CLOUD, currect support aws, azure")
@@ -274,9 +297,22 @@ def main():
     
     elif cloud_provider == "azure":
         call('az login', shell=True)
+        # call('az login -u %s -p %s'%(cloud_access_key,cloud_secret_key), shell=True)
 
-        call('cd '+reproduceFolder+' && az deployment group create --name Deploy LocalTemplate --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
+        call('cd '+reproduceFolder+' && az deployment group create --name DeployRPACPipeline --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
+        time.sleep(5)
+        call('export vmssIP=%s && export account_name=%s && export key=%s && bash ./reproduce/reproduce_lambda.sh'%(get_vmss_ip(resourceGroupName),cloud_access_key,cloud_secret_key), shell=True)
 
+        if args.one_click:
+            with open(reproduceFolder+"/"+reproduceEvent, "r") as json_file:
+                event_dict = json.load(json_file)
+            call('endpoint=$(az eventgrid topic show --name RPACEvent -g %s --query "endpoint" --output tsv)'%resourceGroupName, shell=True)
+            call('eventgridkey=$(az eventgrid topic key list --name RPACEvent -g %s --query "key1" --output tsv)'%resourceGroupName, shell=True)
+            call('curl -X POST -H "aeg-sas-key: $eventgridkey" -d "[{"id": "%s", "eventType": "custom.reproduce", "subject": "RPAC", "data":%s, "eventTime": "%s"}]" $endpoint'%(id_uuid,event_detail,time.time()), shell=True)
+
+        if args.terminate:
+            call('az resource delete --name RPAC --resource-group %s --resource-type "Microsoft.Compute/virtualMachineScaleSets"'%resourceGroupName, shell=True)
+            call('az network nsg delete --resource-group %s --name basicNsgStartlyResource-vnet-nic01', shell=True)
 
 if __name__ == "__main__":
     main()

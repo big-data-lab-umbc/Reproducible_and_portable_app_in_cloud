@@ -1,1 +1,5 @@
 azure-functions
+azure-mgmt-compute
+azure-mgmt-resource
+azure-identity
+azure-cli-core

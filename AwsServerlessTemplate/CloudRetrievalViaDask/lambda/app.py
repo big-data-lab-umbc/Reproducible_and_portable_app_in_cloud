@@ -189,7 +189,7 @@ def lambda2_handler(event, context):
 def generate_record(command_line,Budgetary_cost,Execution_time,Performance_price_ratio,source_data,source_data_verion,program_result,program_result_version,trigger_event,trigger_event_version,reproducibility_folder):
     record_dict = {'command_line':command_line, \
         'budgetary_cost':Budgetary_cost, 'execution_time':Execution_time, 'performance_price_ratio':Performance_price_ratio, \
-        'source_data':source_data, 'source_data_verion':source_data_verion, \
+        'source_data':source_data, 'source_data_version':source_data_verion, \
         'program_result':program_result, 'program_result_version':program_result_version, \
         'trigger_event':trigger_event, 'trigger_event_version':trigger_event_version, \
         'execution_history':reproducibility_folder}

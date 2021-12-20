@@ -49,7 +49,7 @@
             ]
         },
         "virtualMachineScaleSetName": {
-            "value": "CR-VMset"
+            "value": "RPAC"
         },
         "singlePlacementGroup": {
             "value": "false"
