@@ -19,6 +19,7 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 ```
 usage: main.py [-h] [--execution_history EXECUTION_HISTORY] [--one_click]
+               [--terminate]
 
 RPAC Toolkit.
 
@@ -28,6 +29,8 @@ optional arguments:
                         Folder name of execution history to reproduce
   --one_click           Allow one_click execution to be used by RPAC, implies
                         '--one_click'
+  --terminate           Terminate all cloud resources after execution
+                        finished, implies '--terminate'
 ```
 
 To use RPAC toolkit, make the following changes to your configuration:
