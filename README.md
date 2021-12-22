@@ -48,3 +48,17 @@ Three-pointers for experimental execution to get you started:
 
 End-to-end execution also provided in RPAC:
 - [End-to-end: one-click execution with RPAC](./docs/end_to_end.md)
+
+## Citation
+If you use this code for your research, please cite our [paper](https://arxiv.org/abs/2112.09762):
+
+```
+@misc{wang2021reproducible,
+      title={Reproducible and Portable Big Data Analytics in the Cloud}, 
+      author={Xin Wang and Pei Guo and Xingyan Li and Jianwu Wang and Aryya Gangopadhyay and Carl E. Busart and Jade Freeman},
+      year={2021},
+      eprint={2112.09762},
+      archivePrefix={arXiv},
+      primaryClass={cs.DC}
+}
+```
