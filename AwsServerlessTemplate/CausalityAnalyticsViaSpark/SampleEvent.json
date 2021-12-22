@@ -1,8 +1,8 @@
 {
     "Configurations": { 
         "ec2":{
-            "accessKey": "AKIASHT77BI5S2QHPAPZ",
-            "secretKey": "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"
+            "accessKey": "AKIASHT77BI5S2XXXXXXX",
+            "secretKey": "fKZpTa6SbVraWdDoXUSF4AFDfHraFDXXXXXXX"
         },
         "awsRegion": "us-west-2",
         "ec2KeyPath": "~/.ssh/id_rsa",
