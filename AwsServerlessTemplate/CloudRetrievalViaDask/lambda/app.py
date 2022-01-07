@@ -154,6 +154,12 @@ def lambda1_handler(event, context):
         s3_put_object("temp.json",os.environ['S3_LOGBucketNAME']+"/temp.json"),\
         ssm_client)
 
+    if event['Configurations']['terminate']:
+        time.sleep(5)
+        send_command_to_master(masterInstanceId,\
+        event['Configurations']['terminate'],\
+        ssm_client)
+
 
 def lambda2_handler(event, context):
     

@@ -37,6 +37,10 @@
         "SimpleTableName": {
             "Type": "String",
             "Default": "samautomation-ResultsDatabase"
+        },
+        "PythonRuntime": {
+            "Type": "String",
+            "Default": "python3.6"
         }
     },
     "Resources": {
@@ -135,7 +139,9 @@
             "Type": "AWS::Serverless::Function",
             "Properties": {
                 "Handler": "app.lambda1_handler",
-                "Runtime": "python3",
+                "Runtime": {
+                    "Ref": "PythonRuntime"
+                },
                 "CodeUri": "lambda/",
                 "Description": "Created by Starly. Cloud Retrieval AWS Lambda function.",
                 "Timeout": 900,
@@ -182,7 +188,9 @@
             "Type": "AWS::Serverless::Function",
             "Properties": {
                 "Handler": "app.lambda2_handler",
-                "Runtime": "python3",
+                "Runtime": {
+                    "Ref": "PythonRuntime"
+                },
                 "CodeUri": "lambda/",
                 "Description": "Created by Starly. AWS Lambda function to get files from s3 to dynamodb for reproducibility.",
                 "Timeout": 120,

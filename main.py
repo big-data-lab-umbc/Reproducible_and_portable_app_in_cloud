@@ -24,7 +24,7 @@ id_uuid = str(uuid.uuid4())
 def readsummary(): 
     config = configparser.ConfigParser()
     config.read(personalconfigFile)
-    return (str(config['summary']['cloud']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['cloud_credentials']))
+    return (str(config['summary']['cloud']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['your_python_runtime']),str(config['summary']['cloud_credentials']))
 
 def readparameter():
     config = configparser.ConfigParser() 
@@ -51,7 +51,7 @@ def readreprodeuce():
     config.read(resconfigFile)
     return (str(config['reproduce']['reproduce_storage']),str(config['reproduce']['reproduce_database']))
 
-cloud_provider, your_key_path, your_key_name, your_git_username, your_git_password, cloud_credentials = readsummary()  #str
+cloud_provider, your_key_path, your_key_name, your_git_username, your_git_password, your_python_runtime, cloud_credentials = readsummary()  #str
 # vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
 application, experiment_docker, experiment_name, data, command, git_link, bootstrap = readparameter()   #str
 reproduce_storage, reproduce_database = readreprodeuce()
@@ -72,6 +72,7 @@ class Aws:
         self.deploy_conf_path = self.app_path+"deploy_config.json"
         self.deploy_event_path = self.app_path+"SampleEvent.json"
         self.deploy_lambda_path = self.app_path+"lambda"
+        self.terminateCMD = ""
 
     def __str__(self):
         return '{} the aws template'.format(self.name)
@@ -106,7 +107,7 @@ class Aws:
         self.deploy_lambda_path = glob.glob(self.app_path + "/*_FILES", recursive = True)[0]
         
     def terminate_when_finish(self):
-        terminateCMD = "aws cloudformation delete-stack --stack-name rpacautoanalytics"
+        self.terminateCMD = "aws cloudformation delete-stack --stack-name rpacautoanalytics"
 
     def aws_deploy(self):
         #pipeline
@@ -120,6 +121,7 @@ class Aws:
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'SubnetId',SUBNET_ID)
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'VpcId',VPC_ID)
         deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'SimpleTableName',reproduce_database)
+        deploy_new_conf_dict = self.para_control(deploy_new_conf_dict,'PythonRuntime',your_python_runtime)
         #TODO: generate security group resources for each test
         with open(reproduceFolder+"/"+reproduceConf, "w") as json_file:
             json.dump(deploy_conf_dict, json_file, indent=4)
@@ -136,6 +138,7 @@ class Aws:
         new_event_dict = self.event_control(new_event_dict,'output_event','prefix',id_uuid)
         new_event_dict = self.event_control(new_event_dict,'','docker_image',experiment_docker)
         new_event_dict = self.event_control(new_event_dict,'','command_line',command)
+        new_event_dict = self.event_control(new_event_dict,'','terminate',self.terminateCMD)
         with open(reproduceFolder+"/"+reproduceEvent, "w") as json_file:
             json.dump(new_event_dict, json_file, indent=4)
 
@@ -241,17 +244,25 @@ def main():
 
     parser = argparse.ArgumentParser(description='RPAC Toolkit.')
     parser.add_argument('--execution_history', type=str,
-                        default="", help='Folder name of execution history to reproduce')
+                        default="", help='Folder name of execution history to reproduce.')
     parser.add_argument('--one_click', action="store_true",
-                        default=False, help="Allow one_click execution to be used by RPAC, implies '--one_click'")
+                        default=False, help="Allow one_click execution to be used by RPAC, implies '--one_click'. Note this argument will terminate all cloud resources after execution finished.")
     parser.add_argument('--terminate', action="store_true",
-                        default=False, help="Terminate all cloud resources after execution finished, implies '--terminate'")
+                        default=False, help="Terminate all cloud resources, implies '--terminate'.")
     args = parser.parse_args()
 
     if args.execution_history:
         if not os.path.isdir('./ExecutionHistory/%s'%args.execution_history):
             print("Can't find execution history folder ./ExecutionHistory/%s"%args.execution_history)
             exit(0)
+    
+    if args.terminate:
+        if cloud_provider == "aws":
+            call('aws cloudformation delete-stack --stack-name rpacautoanalytics', shell=True)
+        elif cloud_provider == "azure":
+            call('az resource delete --name RPAC --resource-group %s --resource-type "Microsoft.Compute/virtualMachineScaleSets"'%resourceGroupName, shell=True)
+            call('az network nsg delete --resource-group %s --name basicNsgStartlyResource-vnet-nic01'%resourceGroupName, shell=True)
+        exit(0)
 
     for files in os.listdir(reproduceFolder):
         path = os.path.join(reproduceFolder, files)
@@ -264,15 +275,15 @@ def main():
         Cloud = Aws(application)
         if args.execution_history:
             Cloud.reproduce_args(args)
-        if args.terminate:
-            Cloud.terminate_when_finish
+        if args.one_click:
+            Cloud.terminate_when_finish()
         template=Adapter(Cloud, dict(execute=Cloud.aws_deploy))
     elif cloud_provider == "azure":
         Cloud = Azure(application)
         if args.execution_history:
             Cloud.reproduce_args(args)
-        if args.terminate:
-            Cloud.terminate_when_finish
+        if args.one_click:
+            Cloud.terminate_when_finish()
         template=Adapter(Cloud, dict(execute=Cloud.azure_deploy))
     else:
         raise SystemExit("NOT IMPLEMENTED CLOUD, currect support aws, azure")
@@ -310,9 +321,9 @@ def main():
             call('eventgridkey=$(az eventgrid topic key list --name RPACEvent -g %s --query "key1" --output tsv)'%resourceGroupName, shell=True)
             call('curl -X POST -H "aeg-sas-key: $eventgridkey" -d "[{"id": "%s", "eventType": "custom.reproduce", "subject": "RPAC", "data":%s, "eventTime": "%s"}]" $endpoint'%(id_uuid,event_detail,time.time()), shell=True)
 
-        if args.terminate:
+        #if args.terminate:
             call('az resource delete --name RPAC --resource-group %s --resource-type "Microsoft.Compute/virtualMachineScaleSets"'%resourceGroupName, shell=True)
-            call('az network nsg delete --resource-group %s --name basicNsgStartlyResource-vnet-nic01', shell=True)
+            call('az network nsg delete --resource-group %s --name basicNsgStartlyResource-vnet-nic01'%resourceGroupName, shell=True)
 
 if __name__ == "__main__":
     main()

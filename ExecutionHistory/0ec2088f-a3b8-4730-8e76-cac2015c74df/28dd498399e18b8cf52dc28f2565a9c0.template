@@ -36,7 +36,11 @@
         },
         "SimpleTableName": {
             "Type": "String",
-            "Default": "reproduceexampleofrpac"
+            "Default": "samautomation-ResultsDatabase"
+        },
+        "PythonRuntime": {
+            "Type": "String",
+            "Default": "python3.6"
         }
     },
     "Resources": {
@@ -138,8 +142,10 @@
             "Type": "AWS::Serverless::Function",
             "Properties": {
                 "Handler": "app.lambda1_handler",
-                "Runtime": "python3",
-                "CodeUri": "s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/7be7732a9d32fbc7132428871b3c7d29",
+                "Runtime": {
+                    "Ref": "PythonRuntime"
+                },
+                "CodeUri": "s3://aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3/0ec2088f-a3b8-4730-8e76-cac2015c74df/067f4d746ef9e15d72a489723fee57ff",
                 "Description": "Created by Starly. Cloud Retrieval AWS Lambda function.",
                 "Timeout": 900,
                 "Environment": {
@@ -187,8 +193,10 @@
             "Type": "AWS::Serverless::Function",
             "Properties": {
                 "Handler": "app.lambda2_handler",
-                "Runtime": "python3",
-                "CodeUri": "s3://reproduceexampleofrpac/e4bc06ff-603d-4416-899c-b217802efb19/7be7732a9d32fbc7132428871b3c7d29",
+                "Runtime": {
+                    "Ref": "PythonRuntime"
+                },
+                "CodeUri": "s3://aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3/0ec2088f-a3b8-4730-8e76-cac2015c74df/067f4d746ef9e15d72a489723fee57ff",
                 "Description": "Created by Starly. AWS Lambda function to get files from s3 to dynamodb for reproducibility.",
                 "Timeout": 120,
                 "MemorySize": 512,
