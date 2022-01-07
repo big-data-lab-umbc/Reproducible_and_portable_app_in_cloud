@@ -29,11 +29,11 @@ RPAC Toolkit.
 optional arguments:
   -h, --help            show this help message and exit
   --execution_history EXECUTION_HISTORY
-                        Folder name of execution history to reproduce
+                        Folder name of execution history to reproduce.
   --one_click           Allow one_click execution to be used by RPAC, implies
-                        '--one_click'
-  --terminate           Terminate all cloud resources after execution
-                        finished, implies '--terminate'
+                        '--one_click'. Note this argument will terminate all
+                        cloud resources after execution finished.
+  --terminate           Terminate all cloud resources, implies '--terminate'.
 ```
 
 To use RPAC toolkit, make the following changes to your configuration:
