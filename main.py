@@ -231,7 +231,7 @@ class Adapter:
         return str(self.obj)
 
 def get_vmss_ip(resourceGroupName):
-    call('az vmss list-instance-public-ips --resource-group %s --name CR-VMset | tee ./temp.json'%resourceGroupName, shell=True)
+    call('az vmss list-instance-public-ips --resource-group %s --name RPAC | tee ./temp.json'%resourceGroupName, shell=True)
     with open("./temp.json", "r") as json_file:
         list_instance_public_ips = json.load(json_file)
     os.remove("./temp.json")
@@ -311,17 +311,19 @@ def main():
         # call('az login -u %s -p %s'%(cloud_access_key,cloud_secret_key), shell=True)
 
         call('cd '+reproduceFolder+' && az deployment group create --name DeployRPACPipeline --resource-group %s --template-file %s --parameters %s --debug'%(resourceGroupName,reproduceConf,reproducePara), shell=True)
-        time.sleep(5)
-        call('export vmssIP=%s && export account_name=%s && export key=%s && bash ./reproduce/reproduce_lambda.sh'%(get_vmss_ip(resourceGroupName),cloud_access_key,cloud_secret_key), shell=True)
 
         if args.one_click:
+            ''' # TODO: perpare event for one_click asynchronized. (Now --one_click option is synchronized.)
             with open(reproduceFolder+"/"+reproduceEvent, "r") as json_file:
                 event_dict = json.load(json_file)
             call('endpoint=$(az eventgrid topic show --name RPACEvent -g %s --query "endpoint" --output tsv)'%resourceGroupName, shell=True)
             call('eventgridkey=$(az eventgrid topic key list --name RPACEvent -g %s --query "key1" --output tsv)'%resourceGroupName, shell=True)
             call('curl -X POST -H "aeg-sas-key: $eventgridkey" -d "[{"id": "%s", "eventType": "custom.reproduce", "subject": "RPAC", "data":%s, "eventTime": "%s"}]" $endpoint'%(id_uuid,event_detail,time.time()), shell=True)
+            '''
 
-        #if args.terminate:
+            time.sleep(10) # wait for VM's bootstrap
+            call('export vmssIP=%s && export account_name=%s && export key=%s && bash ./reproduce/reproduce_lambda.sh'%(get_vmss_ip(resourceGroupName),cloud_access_key,cloud_secret_key), shell=True)
+
             call('az resource delete --name RPAC --resource-group %s --resource-type "Microsoft.Compute/virtualMachineScaleSets"'%resourceGroupName, shell=True)
             call('az network nsg delete --resource-group %s --name basicNsgStartlyResource-vnet-nic01'%resourceGroupName, shell=True)
 
