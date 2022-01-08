@@ -12,7 +12,7 @@ scp -pr -C -o "StrictHostKeyChecking no" $command_path azureuser@$vmssIP:/home/a
 ssh -i ./ssh/id_rsa -o "StrictHostKeyChecking no" azureuser@$vmssIP "/bin/bash /home/azureuser/command.sh"
 
 end_time="$(date -u +%s.%N)"
-elapsed=$(echo "$end_time - $start_time" | bc)
+elapsed=$(echo "($end_time - $start_time)/3600" | bc)
 
 ssh -i ./ssh/id_rsa -o "StrictHostKeyChecking no" azureuser@$vmssIP "az storage blob upload --account-name $account_name --account-key $key -f /home/azureuser/result.txt -c reproducibility-log/$start_time -n result.txt"
 
@@ -22,7 +22,7 @@ az storage blob upload --account-name $account_name --account-key $key -f $param
 Budgetary_cost=$(echo "$vm_price * $vm_num" | bc)
 Performance_price_ratio=$(echo "$Budgetary_cost * $elapsed" | bc)
 
-record_json="{\"command_line\":\"reproducibility-log/$start_time/command.sh\", \"budgetary_cost\":$Budgetary_cost, \"execution_time\":$elapsed, \"performance_price_ratio\":$Performance_price_ratio, \"source_data\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time/command.sh\", \"source_data_version\":null, \"program_result\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time/result.txt\", \"program_result_version\":null, \"execution_history\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time\"}"
+record_json="{\"command_line\":\"reproducibility-log/$start_time/command.sh\", \"budgetary_cost\":$Budgetary_cost, \"execution_time\":$elapsed, \"performance_price_ratio\":$Performance_price_ratio, \"source_data\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time\", \"source_data_version\":null, \"program_result\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time/result.txt\", \"program_result_version\":null, \"execution_history\":\"https://causalityncerxyroxb2sg.blob.core.windows.net/reproducibility-log/$start_time\"}"
 echo $record_json | tee -a ./$start_time.json
 az storage blob upload --account-name $account_name --account-key $key -f ./$start_time.json -c test -n $start_time.json
 rm ./$start_time.json
