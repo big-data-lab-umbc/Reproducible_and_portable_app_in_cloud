@@ -36,9 +36,4 @@ Successfully created/updated stack - samautoanalytics in us-west-2
 
 <p align="center"><img src="./figures/dynamodbscan.png"/></p>
 
-> Note: here we also provide [Azure Cosmosdb](https://portal.azure.com/#@umbc.onmicrosoft.com/resource/subscriptions/250c38e9-47a3-4d89-bc68-54155a7fe08e/resourcegroups/StartlyResource/providers/Microsoft.DocumentDB/databaseAccounts/causalityresult/dataExplorer) output as reference.
-
-<p align="center"><img src="./figures/cosmosdb.png"/></p>
-
-
 5. Terminate RPAC. Delete the stack just created in [https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2). You can also use `python3 main.py --ternimate` for resources ternimation.
