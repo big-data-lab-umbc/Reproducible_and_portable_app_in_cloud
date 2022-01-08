@@ -1,7 +1,7 @@
 ## End-to-end: one-click execution with RPAC
 
 We put an example in our public S3 bucket `s3://reproduceexampleofrpac`.
-The default `--one_click` args in `main.py` file is False. If you would like to execution data analytics in one-click, imply `--one_click`.
+The default `--one_click` args in `main.py` file is False. If you would like to execution data analytics in one command, imply `--one_click`.
 
 Follow previous steps to set up your configurations, then run `python3 main.py --one_click`. 
 
