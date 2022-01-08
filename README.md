@@ -43,6 +43,8 @@ To use RPAC toolkit, make the following changes to your configuration:
 
 Example usage: `python3 main.py --one_click`, `python3 main.py --execution_history 0ec2088f-a3b8-4730-8e76-cac2015c74df --one_click`.
 
+For a closer look, please refer to our [demo](https://www.youtube.com/watch?v=Jzid0E89SrU).
+
 ## Getting Started
 Three-pointers for experimental execution to get you started:
 - [First execution: get first execution with understanding and using RPAC toolkit](./docs/first_execution.md)
