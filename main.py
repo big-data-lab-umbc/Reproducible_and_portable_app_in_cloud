@@ -252,7 +252,19 @@ def main():
     args = parser.parse_args()
 
     if args.execution_history:
-        if not os.path.isdir('./ExecutionHistory/%s'%args.execution_history):
+        if "s3://" in args.execution_history:
+            try:
+                history_folder = args.execution_history.split('/')[-1]
+                call('aws s3 cp %s ./ExecutionHistory/%s --recursive'%(args.execution_history,history_folder), shell=True)
+                for files in os.listdir('./ExecutionHistory/%s'%history_folder):
+                    if "." not in files:
+                        call('mkdir %s_FILES'%files, shell=True)
+                        call('unzip ./ExecutionHistory/%s/%s -d ./ExecutionHistory/%s/%s_FILES/'%(history_folder,files,history_folder,files), shell=True)
+                        os.remove("./ExecutionHistory/%s/%s"%(history_folder,files))
+            except:
+                print("Invalid S3 URI.")
+                exit(0)
+        elif not os.path.isdir('./ExecutionHistory/%s'%args.execution_history):
             print("Can't find execution history folder ./ExecutionHistory/%s"%args.execution_history)
             exit(0)
     
