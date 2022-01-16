@@ -244,7 +244,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='RPAC Toolkit.')
     parser.add_argument('--execution_history', type=str,
-                        default="", help='Folder name of execution history to reproduce.')
+                        default="", help='Folder name of execution history to reproduce, or URI of execution history.')
     parser.add_argument('--one_click', action="store_true",
                         default=False, help="Allow one_click execution to be used by RPAC, implies '--one_click'. Note this argument will terminate all cloud resources after execution finished.")
     parser.add_argument('--terminate', action="store_true",
