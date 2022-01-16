@@ -16,6 +16,11 @@ pip3 install aws-sam-cli
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
+Set your credentials for all cloud platforms: 
+
+For AWS: `aws configure set aws_access_key_id <aws_access_key> && aws configure set aws_secret_access_key <aws_secert_key>`  
+For Azure: `az login`
+
 ## Usage
 
 - `main.py` To perform RPAC of an experiment on a cloud.
@@ -29,7 +34,8 @@ RPAC Toolkit.
 optional arguments:
   -h, --help            show this help message and exit
   --execution_history EXECUTION_HISTORY
-                        Folder name of execution history to reproduce.
+                        Folder name of execution history to reproduce, or
+                        URI of execution history.
   --one_click           Allow one_click execution to be used by RPAC, implies
                         '--one_click'. Note this argument will terminate all
                         cloud resources after execution finished.
@@ -41,7 +47,7 @@ To use RPAC toolkit, make the following changes to your configuration:
 1. Update configurations [resource.ini](./ConfigTemplate/resource.ini), [application.ini](./ConfigTemplate/application.ini), [personal.ini](./ConfigTemplate/personal.ini) in ConfigTemplate folder.
 2. Run ```python3 main.py``` to execute the big data analytics.
 
-Example usage: `python3 main.py --one_click`, `python3 main.py --execution_history 0ec2088f-a3b8-4730-8e76-cac2015c74df --one_click`.
+Example usage: `python3 main.py --one_click`, `python3 main.py --execution_history 0ec2088f-a3b8-4730-8e76-cac2015c74df --one_click`, `python3 main.py --execution_history s3://aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3/a57f212d-c7c3-46eb-ace4-d62bb6b294f6 --one_click`.
 
 For a closer look, please refer to our [demo](https://www.youtube.com/watch?v=Jzid0E89SrU).
 
