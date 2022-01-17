@@ -2,7 +2,7 @@
 
 When RPAC toolkit is being utilized the first time, there is no execution history for querying and reproducing. Users need to prepare configurations to generate the pipeline file for the whole execution. 
 
-We use CloudRetrievalViaDask application in AWS Cloud as the tutorial example. Azure tutorial is also provided [here](./first_execution_azure.md).
+We use CloudRetrievalViaDask application in AWS Cloud without one_click as the tutorial example. Azure tutorial is also provided [here](./first_execution_azure.md).
 
 
 1. Fill in three configuration files in ./ConfigTemplate folder. 
