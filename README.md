@@ -12,6 +12,9 @@ RPAC currently supports `Python>=3.6`.
 ## Install Dependencies
 ```bash
 pip3 install configparser
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 pip3 install aws-sam-cli
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
