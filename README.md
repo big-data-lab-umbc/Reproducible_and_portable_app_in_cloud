@@ -16,7 +16,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 pip3 install aws-sam-cli
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+(optional, only for Azure-based execution) curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
 Set your credentials for all cloud platforms: 
