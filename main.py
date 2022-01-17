@@ -29,7 +29,7 @@ def readsummary():
 def readparameter():
     config = configparser.ConfigParser() 
     config.read(appconfigFile)
-    return (str(config['parameter']['application']),str(config['parameter']['experiment_docker']),str(config['parameter']['experiment_name']),str(config['parameter']['data']),str(config['parameter']['command']),str(config['parameter']['git_link']),str(config['parameter']['bootstrap']))
+    return (str(config['parameter']['application']),str(config['parameter']['experiment_docker']),str(config['parameter']['data_address']),str(config['parameter']['command']),str(config['parameter']['bootstrap']))
 
 def readawscloud():
     config = configparser.ConfigParser() 
@@ -53,12 +53,14 @@ def readreprodeuce():
 
 cloud_provider, your_key_path, your_key_name, your_git_username, your_git_password, your_python_runtime, cloud_credentials = readsummary()  #str
 # vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
-application, experiment_docker, experiment_name, data, command, git_link, bootstrap = readparameter()   #str
+application, experiment_docker, data_address, command, bootstrap = readparameter()   #str
 reproduce_storage, reproduce_database = readreprodeuce()
 cloud_access_key = cloud_credentials.split(":")[0]
 cloud_secret_key = cloud_credentials.split(":")[1]
 if cloud_provider == "aws":
     instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
+    data_filename = data_address.split['/'][-1]
+    data_bucketname = data_address.split['/'][-2]
 elif cloud_provider == "azure":
     REGION, resourceGroupID, resourceGroupName, instance_num, INSTANCE_TYPE = readazurecloud() #str
 
@@ -96,6 +98,8 @@ class Aws:
             except:
                 if path == 'ec2':
                     event_dict['Configurations'].update({'ec2': {"accessKey": value,"secretKey": ""}})
+                if path == 'comm':
+                    event_dict['Commands'][key] = value
                 elif path == '':
                     event_dict['Configurations'][key] = value
         return event_dict
@@ -136,9 +140,12 @@ class Aws:
         new_event_dict = self.event_control(new_event_dict,'output_result','prefix',id_uuid)
         new_event_dict = self.event_control(new_event_dict,'output_event','bucketname',reproduce_storage)
         new_event_dict = self.event_control(new_event_dict,'output_event','prefix',id_uuid)
+        new_event_dict = self.event_control(new_event_dict,'source_data','bucketname',data_bucketname)
+        new_event_dict = self.event_control(new_event_dict,'source_data','filename',data_filename)
         new_event_dict = self.event_control(new_event_dict,'','docker_image',experiment_docker)
         new_event_dict = self.event_control(new_event_dict,'','command_line',command)
         new_event_dict = self.event_control(new_event_dict,'','terminate',self.terminateCMD)
+        new_event_dict = self.event_control(new_event_dict,'comm','bash',bootstrap)
         with open(reproduceFolder+"/"+reproduceEvent, "w") as json_file:
             json.dump(new_event_dict, json_file, indent=4)
 
