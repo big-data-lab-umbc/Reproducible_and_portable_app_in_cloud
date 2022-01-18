@@ -26,6 +26,7 @@ pip3 install configparser
 Set your credentials and other configurations for cloud platforms: 
 
 For AWS: `aws configure set aws_access_key_id <aws_access_key> && aws configure set aws_secret_access_key <aws_secert_key> && aws configure set default.region us-west-2` 
+
 For Azure: `az login`
 
 ## Usage
