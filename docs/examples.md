@@ -2,8 +2,6 @@
 
 The [examples](../examples) folder includes configuration examples of our three proposed parallel frameworks. To running the examples, just directly copy their example configurations from `./examples/application` to `./ConfigTemplate`. 
 
-To create your own application, see [doc](./newapplication.md).
-
 # Spark-based big data analytics on virtual CPU nodes.
 We provide Spark-based parallel framework via the docker-based Spark engine virtual cluster provisioned by direct cloud services like AWS EMR with additional cloud resources like virtual network, container service and file system. 
 By default setting, the resource manager like YARN NodeManager initiates the environment from a pulled docker image, and allocates one virtual instance as the master while others as workers. With the pipeline execution mode like serverless, big data analytics enables automated execution management on master and execution computation on workers defined by serverless function handlers/implementations. 

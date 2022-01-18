@@ -29,7 +29,12 @@ def readsummary():
 def readparameter():
     config = configparser.ConfigParser() 
     config.read(appconfigFile)
-    return (str(config['parameter']['application']),str(config['parameter']['experiment_docker']),str(config['parameter']['data_address']),str(config['parameter']['command']),str(config['parameter']['bootstrap']))
+    return (str(config['parameter']['experiment_docker']),str(config['parameter']['data_address']),str(config['parameter']['command']),str(config['parameter']['bootstrap']))
+
+def readbigdataengine():
+    config = configparser.ConfigParser() 
+    config.read(resconfigFile)
+    return (int(config['bigdataengine']['application']))
 
 def readawscloud():
     config = configparser.ConfigParser() 
@@ -53,7 +58,8 @@ def readreprodeuce():
 
 cloud_provider, your_key_path, your_key_name, your_git_username, your_git_password, your_python_runtime, cloud_credentials = readsummary()  #str
 # vm_price, bigdata_cluster_price, network_price, storage_price, container_price = readbill()  #float
-application, experiment_docker, data_address, command, bootstrap = readparameter()   #str
+experiment_docker, data_address, command, bootstrap = readparameter()   #str
+application = readbigdataengine()
 reproduce_storage, reproduce_database = readreprodeuce()
 cloud_access_key = cloud_credentials.split(":")[0]
 cloud_secret_key = cloud_credentials.split(":")[1]
