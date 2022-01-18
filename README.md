@@ -12,17 +12,19 @@ RPAC currently supports `Python>=3.6`.
 ## Install Dependencies
 ```bash
 pip3 install configparser
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
-pip3 install aws-sam-cli
 ```
+> Optional dependencies, only for AWS-based execution. Commands for other OSs are at [AWS User Guilde](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html): 
+> ```bash
+> pip3 install aws-sam-cli
+> curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+> ```
 > Optional dependencies, only for Azure-based execution: 
 > ```bash
 > curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 > ```
 
-Set your credentials for all cloud platforms: 
-
-For AWS: `aws configure set aws_access_key_id <aws_access_key> && aws configure set aws_secret_access_key <aws_secert_key>`  
+Set your credentials and other configurations for cloud platforms: 
+For AWS: `aws configure set aws_access_key_id <aws_access_key> && aws configure set aws_secret_access_key <aws_secert_key> && aws configure set default.region us-west-2` 
 For Azure: `az login`
 
 ## Usage
