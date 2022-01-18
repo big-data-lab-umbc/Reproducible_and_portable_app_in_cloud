@@ -9,11 +9,11 @@ Change your configurations in `resource.ini` and `application.ini`.
 - application.ini
     - experiment_docker: The public docker image name in DockerHub, formated in `<username>/<repository_name>`.
   
-        If you provide Dockerfile: 
+        If you provide Dockerfile, run the following commands at the folder of your docker file, such as docker/CloudRetrievalViaDask: 
         
             1. Log into the Docker public registry on your local machine: `docker login -u <Username> -p <Password>`.  
-            2. Build the image: `docker build -t <username>/<repository_name>[:tagname] .`. For example `docker build -t starlyxxx/dask-decision-tree-example:latest .`.  
-            3. Push your Docker image to Docker Hub: `docker push <username>/<repository_name>[:tagname]`. For example `docker push starlyxxx/dask-decision-tree-example:latest`.  
+            2. Build the image: `docker build -t <username>/<repository_name>[:tagname] .`. For example: `docker build -t starlyxxx/dask-decision-tree-example:latest .`  
+            3. Push your Docker image to Docker Hub: `docker push <username>/<repository_name>[:tagname]`. For example: `docker push starlyxxx/dask-decision-tree-example:latest`.  
             4. Then put your public docker image name into `application.ini`.  
     - data_address: The S3 URI of the data.
     - command: Command line to start docker-based execution analytics starting by `docker run` or `nvidia-docker run`.   
