@@ -34,7 +34,7 @@ For Azure: `az login`
 - `main.py` To perform RPAC of an experiment on a cloud.
 
 ```
-usage: main.py [-h] [--execution_history EXECUTION_HISTORY] [--one_click]
+usage: python3 main.py [-h] [--execution_history EXECUTION_HISTORY] [--one_click]
                [--terminate]
 
 RPAC Toolkit.
@@ -53,7 +53,9 @@ optional arguments:
 To use RPAC toolkit, make the following changes to your configuration:
 
 1. Update configurations [resource.ini](./ConfigTemplate/resource.ini), [application.ini](./ConfigTemplate/application.ini), [personal.ini](./ConfigTemplate/personal.ini) in ConfigTemplate folder.
-2. Run ```python3 main.py``` to execute the big data analytics.
+  - For application.ini: **reproduce_storage** is the S3 Bucket name, which will store all reproduction historical files. You need to create your bucket before running RPAC. The Bucket naming rules can be find in [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html).
+  - For personal.ini: **cloud_credentials** is the key:value pair of your cloud credentials (Access key ID:Secret key ID). In order to find your credentials, see [here](https://console.aws.amazon.com/iam/home?region=us-west-2#security_credential).
+3. Run ```python3 main.py``` to execute the big data analytics.
 
 Example usage: `python3 main.py --one_click`, `python3 main.py --execution_history 0ec2088f-a3b8-4730-8e76-cac2015c74df --one_click`, `python3 main.py --execution_history s3://aws-sam-cli-managed-default-samclisourcebucket-xscicpwnc0z3/a57f212d-c7c3-46eb-ace4-d62bb6b294f6 --one_click`.
 
