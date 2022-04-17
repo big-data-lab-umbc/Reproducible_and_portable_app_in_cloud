@@ -15,8 +15,10 @@ RUN python3.6 -m pip install --upgrade pip setuptools
 RUN python3.6 -m pip install configargparse
 RUN pip3 install netCDF4 h5py pyhdf pandas numpy datetimerange
 
-# Fetch satellite collocation code from its repository
+# Fetch satellite collocation code from its repository and install it
 RUN git clone https://github.com/AI-4-atmosphere-remote-sensing/satellite_collocation
+cd satellite_collocation
+python3.6 setup.py install
 
 #for dask
 RUN python3.6 -m pip install "dask[complete]"
