@@ -5,6 +5,7 @@ Move to `./AwsServerlessTemplate`, modify `NewAppTemplate` to your application n
 Change your configurations in `resource.ini` and `application.ini`.
 - resource.ini
     - application: Your application name, which is the folder name in `./AwsServerlessTemplate` or `./AzureServerlessTemplate`. 
+    - reproduce_storage: The S3 Bucket name, which will store all reproduction historical files. You need to create your bucket before running RPAC. The Bucket naming rules can be find in [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html).
  
 - application.ini
     - experiment_docker: The public docker image name in DockerHub, formated in `<username>/<repository_name>`.
