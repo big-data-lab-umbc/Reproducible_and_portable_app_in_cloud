@@ -1,11 +1,16 @@
 ## First execution: get first execution with understanding and using RPAC toolkit
 
-When RPAC toolkit is being utilized the first time, there is no execution history for querying and reproducing. Users need to prepare configurations to generate the pipeline file for the whole execution. 
+When RPAC toolkit is being utilized the first time, there is no execution history for querying and reproducing. Users need to prepare configurations to generate the pipeline file for the whole execution.
 
 We use CloudRetrievalViaDask application in AWS Cloud without one_click as the tutorial example. Azure tutorial is also provided [here](./first_execution_azure.md).
 
+Preparation: If you do not have a docker image yet, you can run the following command to create docker image from a docker file under the folder where Dockerfile is located:
+```
+docker build -t jianwuwang/satellite-collocation:latest ./
+```
 
-1. Fill in three configuration files in ./ConfigTemplate folder. 
+
+1. Fill in three configuration files in ./ConfigTemplate folder.
 
 
 > Note: For personal.ini, `cloud_credentials` is formated in `credential_access_key:credential_secert_key`. For resource.ini, `reproduce_database` in DynamoDB and `reproduce_storage` in S3 need to be created with your aws account before starting RPAC.
