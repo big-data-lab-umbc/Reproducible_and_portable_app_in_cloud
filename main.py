@@ -20,12 +20,13 @@ reproduceEvent = "my_event.json"
 
 id_uuid = str(uuid.uuid4())
 
-
+#cloud,your_key_path,your_key_name,your_python_runtime,your_git_username,your_git_password,cloud_credentials
 def readsummary(): 
     config = configparser.ConfigParser()
     config.read(personalconfigFile)
     return (str(config['summary']['cloud']),str(config['summary']['your_key_path']),str(config['summary']['your_key_name']),str(config['summary']['your_git_username']),str(config['summary']['your_git_password']),str(config['summary']['your_python_runtime']),str(config['summary']['cloud_credentials']))
 
+#experiment_docker,data_address,command,bootstrap
 def readparameter():
     config = configparser.ConfigParser() 
     config.read(appconfigFile)
@@ -34,7 +35,7 @@ def readparameter():
 def readbigdataengine():
     config = configparser.ConfigParser() 
     config.read(resconfigFile)
-    return (int(config['bigdataengine']['application']))
+    return (str(config['bigdataengine']['application']))
 
 def readawscloud():
     config = configparser.ConfigParser() 
@@ -65,8 +66,8 @@ cloud_access_key = cloud_credentials.split(":")[0]
 cloud_secret_key = cloud_credentials.split(":")[1]
 if cloud_provider == "aws":
     instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
-    data_filename = data_address.split['/'][-1]
-    data_bucketname = data_address.split['/'][-2]
+    data_filename = data_address.split('/')[-1]
+    data_bucketname = data_address.split('/')[-2]
 elif cloud_provider == "azure":
     REGION, resourceGroupID, resourceGroupName, instance_num, INSTANCE_TYPE = readazurecloud() #str
 
