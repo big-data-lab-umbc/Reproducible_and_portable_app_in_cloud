@@ -4,9 +4,10 @@ When RPAC toolkit is being utilized the first time, there is no execution histor
 
 We use CloudRetrievalViaDask application in AWS Cloud without one_click as the tutorial example. Azure tutorial is also provided [here](./first_execution_azure.md).
 
-Preparation: If you do not have a docker image yet, you can run the following command to create docker image from a docker file under the folder where Dockerfile is located:
+Preparation: If you do not have a docker image yet, you can run commands like the following examples to create docker image from a docker file under the folder where Dockerfile is located and push it to [docker hub](https://hub.docker.com).
 ```
 docker build -t jianwuwang/satellite-collocation:latest ./
+docker push jianwuwang/satellite-collocation:latest
 ```
 
 
