@@ -1,6 +1,6 @@
 ## Create new application in RPAC
 
-Move to `./AwsServerlessTemplate`, modify `NewAppTemplate` to your application name, so later you can use this name in `resource.ini`.
+Go to folder `./AwsServerlessTemplate`, revise `NewAppTemplate` as your application (folder name and contents). Later, you can use this name in `resource.ini`.
 
 Change your configurations in `resource.ini` and `application.ini`.
 - resource.ini
@@ -18,6 +18,6 @@ Change your configurations in `resource.ini` and `application.ini`.
             4. Then put your public docker image name into `application.ini`.  
     - data_address: The **S3 URI** of the data.
     - command: Command line to start docker-based execution analytics starting by `docker run` or `nvidia-docker run`. **Note: since the json format cannot convert correctly in RPAC, please using ` (back apostrophe) to replace the ' (apostrophe) symbol.** 
-    - bootstrap: **Command line before you start execution analytics.** Like private s3 data download and unzip, program library install, and any other additional commands (mutiple commands can be chained by logical AND operator `&&`).
+    - bootstrap: Command lines **before** you starting execution analytics. Like private s3 data download and unzip, program library install, and any other additional commands (mutiple commands can be chained by logical AND operator `&&`).
 
 > Note: The serverless function provided by RPAC uses the print out contents of analytics execution as the `results.txt`. You may need advanced operations for mutiple outputs within your application. At this time, you need to develop your own serverless function, by updating `./AwsServerlessTemplate/NewAppTemplate/lambda` folder. More instructions and examples for serverless function development can be found in [link](https://github.com/serverless/examples).
