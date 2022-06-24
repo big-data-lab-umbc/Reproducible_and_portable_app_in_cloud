@@ -40,7 +40,7 @@ def readbigdataengine():
 def readawscloud():
     config = configparser.ConfigParser() 
     config.read(resconfigFile)
-    return (int(config['cloud.aws']['instance_num']),str(config['cloud.aws']['SUBNET_ID']),str(config['cloud.aws']['INSTANCE_TYPE']),str(config['cloud.aws']['VPC_ID']))
+    return (str(config['cloud.aws']['REGION']),int(config['cloud.aws']['instance_num']),str(config['cloud.aws']['SUBNET_ID']),str(config['cloud.aws']['INSTANCE_TYPE']),str(config['cloud.aws']['VPC_ID']))
 
 def readazurecloud():
     config = configparser.ConfigParser() 
@@ -62,10 +62,38 @@ cloud_provider, your_key_path, your_key_name, your_git_username, your_git_passwo
 experiment_docker, data_address, command, bootstrap = readparameter()   #str
 application = readbigdataengine()
 reproduce_storage, reproduce_database = readreprodeuce()
-cloud_access_key = cloud_credentials.split(":")[0]
-cloud_secret_key = cloud_credentials.split(":")[1]
+
+if cloud_credentials.split(":")[1]:
+    cloud_access_key = cloud_credentials.split(":")[0]
+    cloud_secret_key = cloud_credentials.split(":")[1]
+else:
+    print("Please provide the key-value pair of your cloud credentials. Format is <Access key ID:Secret key ID>. In order to find your credentials, see https://console.aws.amazon.com/iam/home?region=us-west-2#security_credential.")
+    exit(0)
+
+def contain_underscores(test_str):
+    res = False
+    for ele in test_str:
+        if ele.isupper():
+            res = True
+            return res
+    return res
+if "_" in reproduce_storage or reproduce_storage[-1]=="-" or contain_underscores(reproduce_storage):
+    print("The bucket names cannot contain underscores, uppercase letters, or ending with a hyphen. The detailed bucket naming rules can be find in https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html.")
+    exit(0)
+    
 if cloud_provider == "aws":
-    instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
+    REGION, instance_num, SUBNET_ID, INSTANCE_TYPE, VPC_ID = readawscloud() #int,str
+    
+    call('aws configure set aws_access_key_id '+cloud_access_key, shell=True)
+    call('aws configure set aws_secret_access_key '+cloud_secret_key, shell=True)
+    output_stream = os.popen('aws ec2 describe-instance-type-offerings --filters Name=instance-type,Values=%s --region %s'%(INSTANCE_TYPE,REGION))
+    output_json = json.load(output_stream)
+    try:
+        output_json['InstanceTypeOfferings'][0]['InstanceType']
+    except:
+        print("Your instance type is not valid in region %s."%REGION)
+        exit(0)
+    
     data_filename = data_address.split('/')[-1]
     data_bucketname = data_address.split('/')[-2]
 elif cloud_provider == "azure":
@@ -75,7 +103,7 @@ elif cloud_provider == "azure":
 class Aws:
     def __init__(self, name):
         self.name = name
-        self.app_path = "AwsServerlessTemplate/"+application+"/"     #SparkAnalytics/DaskAnalytics/HovorodAnalytics
+        self.app_path = "AwsServerlessTemplate/"+application+"/"    
 
         #self.para_path = self.app_path+"parameter.json"
         self.deploy_conf_path = self.app_path+"deploy_config.json"
@@ -317,8 +345,8 @@ def main():
     print('{} {}'.format(str(template), template.execute()))
 
     if cloud_provider == "aws":
-        call('aws configure set aws_access_key_id '+cloud_access_key, shell=True)
-        call('aws configure set aws_secret_access_key '+cloud_secret_key, shell=True)
+        #call('aws configure set aws_access_key_id '+cloud_access_key, shell=True)
+        #call('aws configure set aws_secret_access_key '+cloud_secret_key, shell=True)
 
         call('cd '+reproduceFolder+' && sam validate -t '+reproduceConf, shell=True)
         call('cd '+reproduceFolder+' && sam build -t '+reproduceConf, shell=True)
