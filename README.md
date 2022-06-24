@@ -53,7 +53,7 @@ optional arguments:
 To use RPAC toolkit, make the following changes to your configuration:
 
 1. Update configurations [resource.ini](./ConfigTemplate/resource.ini), [application.ini](./ConfigTemplate/application.ini), [personal.ini](./ConfigTemplate/personal.ini) in ConfigTemplate folder.
-  - For application.ini: **reproduce_storage** is the S3 Bucket name, which will store all reproduction historical files. You need to create your bucket before running RPAC. We recommend a name only with lowercase letters, numbers, and hyphens (-). The detailed Bucket naming rules can be find in [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html).
+  - For resource.ini: **reproduce_storage** is the S3 Bucket name, which will store all reproduction historical files. You need to create your bucket before running RPAC. We recommend a name only with lowercase letters, numbers, and hyphens (-). The detailed Bucket naming rules can be find in [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html).
   - For personal.ini: **cloud_credentials** is the key:value pair of your cloud credentials (Access key ID:Secret key ID). In order to find your credentials, see [here](https://console.aws.amazon.com/iam/home?region=us-west-2#security_credential).
 3. Run ```python3 main.py``` to execute the big data analytics.
 
